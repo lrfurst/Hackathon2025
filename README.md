@@ -14,13 +14,15 @@ Prever a probabilidade de atraso de um voo com base em dados históricos (Compan
 1. Instale as dependências:
    ```bash
    pip install -r requirements.txt
+   
 2. Carregue o modelo no seu código Python/API:
-'''Python
+   
+```Python
 
-import joblib
-modelo = joblib.load('flight_model.joblib')
-prediction = modelo.predict(dados_do_voo)
-'''
+   import joblib
+   modelo = joblib.load('flight_model.joblib')
+   prediction = modelo.predict(dados_do_voo)
+```
 📊 Status do Projeto
 
 [x] MVP (Dados Simulados)
