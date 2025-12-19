@@ -20,7 +20,8 @@ FlightOnTime/
 └── README.md         # Documentação do Projeto
 ```
 
-🧠 Ciência de Dados (Data Science)
+## 🧠 Ciência de Dados (Data Science)
+
 A equipe realizou um ciclo completo de ciência de dados: Limpeza, Análise Exploratória (EDA), Feature Engineering e Modelagem.
 
 🔍 Principais Insights da Análise Multivariada
@@ -64,13 +65,49 @@ Instale as dependências: pip install -r requirements.txt
 
 Execute os notebooks na ordem numérica.
 
-☕ Back-End (API)
-A API REST foi desenvolvida para consumir o modelo treinado e servir as predições.
+## ☕ Back-End (API)
+A API REST foi desenvolvida com o objetivo de **consumir o modelo de Machine Learning treinado** e **servir predições de atraso de voos** de forma simples e eficiente, permitindo a integração com aplicações externas, como front-end, dashboards ou outros serviços.
 
-Endpoint Principal: POST /predict
+O serviço expõe um endpoint principal responsável por receber os dados do voo, processá-los e retornar a previsão de atraso.
 
-Entrada: JSON com dados do voo (Companhia, Origem, Data, Distância).
+---
 
-Saída: Status (Pontual/Atrasado) e Probabilidade (%).
+### 📍 Endpoint Principal
 
-Tecnologia: Java / Spring Boot.
+**POST** `/predict`
+
+---
+
+### 📥 Entrada (Request)
+
+A API recebe um objeto JSON contendo as principais informações do voo, como:
+
+- Companhia aérea  
+- Aeroporto de origem  
+- Data do voo  
+- Distância do trajeto  
+
+Esses dados são utilizados como **variáveis de entrada para o modelo de predição**.
+
+---
+
+### 📤 Saída (Response)
+
+A resposta da API é um objeto JSON contendo:
+
+- **Status do voo:** classificação binária (*Pontual* ou *Atrasado*)  
+- **Probabilidade de atraso:** valor percentual associado à predição (0 a 1)  
+
+Essas informações permitem que usuários e sistemas consumidores **tomem decisões de forma antecipada**.
+
+---
+
+### 🛠️ Tecnologias Utilizadas
+
+- Java  
+- Spring Boot  
+- API REST  
+
+---
+
+A arquitetura  foi pensada para ser **simples, escalável e de fácil manutenção**, facilitando futuras evoluções.
