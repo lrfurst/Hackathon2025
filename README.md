@@ -18,6 +18,7 @@ FlightOnTime/
 ├── datascience/      # Notebooks de Análise (EDA), Limpeza e Treinamento
 ├── models/           # Modelos serializados (.joblib) prontos para produção
 └── README.md         # Documentação do Projeto
+```
 
 🧠 Ciência de Dados (Data Science)
 A equipe realizou um ciclo completo de ciência de dados: Limpeza, Análise Exploratória (EDA), Feature Engineering e Modelagem.
