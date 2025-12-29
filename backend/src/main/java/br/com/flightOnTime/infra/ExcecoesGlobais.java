@@ -1,9 +1,11 @@
 package br.com.flightOnTime.infra;
 
 import br.com.flightOnTime.dto.ErroResponseDTO;
+import br.com.flightOnTime.dto.ValidarCampos;
 import br.com.flightOnTime.exception.PrevisaoNaoEncontrada;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,24 +21,22 @@ public class ExcecoesGlobais {
                     .status(HttpStatus.NOT_FOUND)
                     .body(erro);
         }
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErroResponseDTO> tratarIllegalArgument(IllegalArgumentException ex) {
 
-        ErroResponseDTO erro = new ErroResponseDTO(ex.getMessage());
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(erro);
-    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErroResponseDTO> tratarErroGenerico(Exception ex) {
 
         ErroResponseDTO erro =
-                new ErroResponseDTO("Erro interno no servidor");
+                new ErroResponseDTO("Erro interno no servidor,API python offline");
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(erro);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?>validandoCampos(MethodArgumentNotValidException ex){
+           var erros = ex.getFieldErrors();
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erros.stream().map(ValidarCampos::new).toList());
     }
 }
 
