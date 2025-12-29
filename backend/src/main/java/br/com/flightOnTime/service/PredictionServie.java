@@ -3,6 +3,7 @@ package br.com.flightOnTime.service;
 
 import br.com.flightOnTime.dto.PredictionRequestDTO;
 import br.com.flightOnTime.dto.PredictionResponseDTO;
+import br.com.flightOnTime.exception.PrevisaoNaoEncontrada;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -19,14 +20,8 @@ public class PredictionServie {
                 .baseUrl(PYTHON_API_URL)
                 .build();
     }
-    // Construtor: Spring injeta o WebClient.Builder criado na WebClientConfig
 
     public PredictionResponseDTO getPrediction(PredictionRequestDTO request) {
-        // Validação Simples antes de enviar
-        //remover esta linha ao criar o controller
-        if (request.getOrigem() == null || request.getData_partida() == null) {
-            throw new IllegalArgumentException("Os campos 'origem' e 'data_partida' são obrigatórios.");
-        }
 
         // 1. Chama a API Python (POST para http://localhost:5000/predict_internal)
         return webClient.post()
@@ -35,7 +30,7 @@ public class PredictionServie {
                 .retrieve()
                 // 2. Tratamento de Erros da Chamada HTTP (4xx e 5xx)
                 .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                        response -> Mono.error(new RuntimeException("Erro ao chamar o serviço de previsão Python: Código " + response.statusCode())))
+                        response -> Mono.error(new PrevisaoNaoEncontrada("Erro ao chamar o serviço de previsão Python: Código " + response.statusCode())))
 
                 // 3. Mapeia a Resposta JSON para o objeto Java PredictionResponse
                 .bodyToMono(PredictionResponseDTO.class)
