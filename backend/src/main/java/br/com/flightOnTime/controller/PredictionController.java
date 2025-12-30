@@ -25,7 +25,7 @@ public class PredictionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "endpoint responsável pela previsão de vôo e histórico de atrasos.")
+    @Operation(summary = "endpoint responsável pela previsão de vôo, histórico de atrasos e cadastro das consultas.")
     @ApiResponse(responseCode = "200", description = " success", content = {
             @Content(mediaType = "application.json", schema = @Schema(implementation = ResponseEntity.class))
     })
