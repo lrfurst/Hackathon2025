@@ -36,7 +36,6 @@ private static final String FLASK_URL = "http://localhost:5000";
 
             log.debug("Flask respondeu com HTTP {}", code);
 
-            // QUALQUER resposta HTTP (inclusive 404) = Flask ONLINE
             return Health.up()
                     .withDetail("status", "Flask ONLINE")
                     .withDetail("url", FLASK_URL)
@@ -48,7 +47,6 @@ private static final String FLASK_URL = "http://localhost:5000";
                     .build();
 
         } catch (java.net.ConnectException e) {
-            // Conexão recusada = Flask OFFLINE
             log.warn("Flask OFFLINE: Conexão recusada");
             return Health.down()
                     .withDetail("status", "Flask OFFLINE")
@@ -58,7 +56,6 @@ private static final String FLASK_URL = "http://localhost:5000";
                     .build();
 
         } catch (java.net.SocketTimeoutException e) {
-            // Timeout = Flask OFFLINE
             log.warn("Flask OFFLINE: Timeout");
             return Health.down()
                     .withDetail("status", "Flask OFFLINE")
@@ -68,7 +65,6 @@ private static final String FLASK_URL = "http://localhost:5000";
                     .build();
 
         } catch (Exception e) {
-            // Outros erros
             return Health.down()
                     .withDetail("status", "Flask OFFLINE")
                     .withDetail("url", FLASK_URL)
