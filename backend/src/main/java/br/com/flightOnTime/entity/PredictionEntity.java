@@ -26,5 +26,6 @@ public class PredictionEntity {
     @Column(nullable = false)
     private String resultadoPrevisao;
     private Double probabilidade;
+    @Column(name = "dataConsulta", nullable = false)
     private LocalDateTime dataConsulta;
 }
