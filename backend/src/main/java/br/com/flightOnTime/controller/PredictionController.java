@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +22,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/predict")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class PredictionController {
-
     private final PredictionService predictionService;
 
-    public PredictionController(PredictionService predictionService) {
-        this.predictionService = predictionService;
-    }
+
 
     @PostMapping
     @Operation(summary = "endpoint responsável pela previsão de vôo, histórico de atrasos e cadastro das consultas.")
@@ -52,5 +51,6 @@ public class PredictionController {
     public ResponseEntity<StatusResponseDTO>showStatus(){
         return ResponseEntity.ok(predictionService.getStatus());
     }
+
 }
 

@@ -8,7 +8,6 @@ import br.com.flightOnTime.dto.StatusResponseDTO;
 import br.com.flightOnTime.entity.PredictionEntity;
 import br.com.flightOnTime.exception.PrevisaoNaoEncontrada;
 import br.com.flightOnTime.repository.PredictionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -96,3 +95,8 @@ import java.util.stream.Collectors;
     }
 
 }
+
+
+
+
+
