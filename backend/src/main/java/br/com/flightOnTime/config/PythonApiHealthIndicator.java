@@ -1,8 +1,8 @@
 package br.com.flightOnTime.config;
 
-
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.health.contributor.HealthIndicator;
 
@@ -18,14 +18,18 @@ import java.time.LocalDateTime;
 @Component("pythonApiHealth")
 public class PythonApiHealthIndicator implements HealthIndicator {
 
-private static final String FLASK_URL = "http://localhost:5000";
+  //  private static final String FLASK_URL = "http://localhost:5000";
+  @Value("${API_PYTHON_URL:http://app-python:5000}")
+  private String flaskUrl;
+
+
 
     @Override
     public Health health() {
-        log.debug("Testando Flask em: {}", FLASK_URL);
+        log.debug("Testando Flask em: {}", flaskUrl);
 
         try {
-            URL url = new URL(FLASK_URL);
+            URL url = new URL(flaskUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(2000);
@@ -39,7 +43,7 @@ private static final String FLASK_URL = "http://localhost:5000";
             // QUALQUER resposta HTTP (inclusive 404) = Flask ONLINE
             return Health.up()
                     .withDetail("status", "Flask ONLINE")
-                    .withDetail("url", FLASK_URL)
+                    .withDetail("url", flaskUrl)
                     .withDetail("httpCode", code)
                     .withDetail("timestamp", LocalDateTime.now())
                     .withDetail("note", code == 404 ?
@@ -52,7 +56,7 @@ private static final String FLASK_URL = "http://localhost:5000";
             log.warn("Flask OFFLINE: Conexão recusada");
             return Health.down()
                     .withDetail("status", "Flask OFFLINE")
-                    .withDetail("url", FLASK_URL)
+                    .withDetail("url", flaskUrl)
                     .withDetail("error", "Conexão recusada - Flask não está rodando")
                     .withDetail("timestamp", LocalDateTime.now())
                     .build();
@@ -62,7 +66,7 @@ private static final String FLASK_URL = "http://localhost:5000";
             log.warn("Flask OFFLINE: Timeout");
             return Health.down()
                     .withDetail("status", "Flask OFFLINE")
-                    .withDetail("url", FLASK_URL)
+                    .withDetail("url", flaskUrl)
                     .withDetail("error", "Timeout - Flask não respondeu em 2 segundos")
                     .withDetail("timestamp", LocalDateTime.now())
                     .build();
@@ -71,7 +75,7 @@ private static final String FLASK_URL = "http://localhost:5000";
             // Outros erros
             return Health.down()
                     .withDetail("status", "Flask OFFLINE")
-                    .withDetail("url", FLASK_URL)
+                    .withDetail("url", flaskUrl)
                     .withDetail("error", e.getMessage())
                     .withDetail("timestamp", LocalDateTime.now())
                     .build();
