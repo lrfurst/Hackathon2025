@@ -1,5 +1,6 @@
 package br.com.flightOnTime.controller;
 
+import br.com.flightOnTime.dto.PredictionHistoryDTO;
 import br.com.flightOnTime.dto.PredictionRequestDTO;
 import br.com.flightOnTime.dto.PredictionResponseDTO;
 import br.com.flightOnTime.service.PredictionService;
@@ -11,14 +12,17 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/predict") //Caminho base do controller
+@RequestMapping("/predict")
 @CrossOrigin(origins = "*")
 public class PredictionController {
-    //Declarar uma dependência  do service
+
     private final PredictionService predictionService;
-    //Injeção de dependência por construtor
+
     public PredictionController(PredictionService predictionService) {
         this.predictionService = predictionService;
     }
@@ -30,12 +34,10 @@ public class PredictionController {
             @Content(mediaType = "application.json", schema = @Schema(implementation = ResponseEntity.class))
     })
     public ResponseEntity<PredictionResponseDTO> predict(@Valid @RequestBody PredictionRequestDTO request) {
-        // Solicita ao service a previsão do status do voo com base nos dados informados
-        PredictionResponseDTO response = predictionService.getPrediction(request);
-
-        // Retorna a resposta com o status HTTP 200 (OK)
+        var response = predictionService.getPrediction(request);
         return ResponseEntity.ok(response);
 
     }
+
 }
 

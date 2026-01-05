@@ -9,6 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.channels.ClosedChannelException;
+
 @RestControllerAdvice
 public class ExcecoesGlobais {
 
@@ -22,7 +24,7 @@ public class ExcecoesGlobais {
                     .body(erro);
         }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(ClosedChannelException.class)
     public ResponseEntity<ErroResponseDTO> tratarErroGenerico(Exception ex) {
 
         ErroResponseDTO erro =
