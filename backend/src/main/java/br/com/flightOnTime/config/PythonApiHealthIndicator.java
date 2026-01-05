@@ -17,16 +17,21 @@ import java.time.LocalDateTime;
 @Slf4j
 @Component("pythonApiHealth")
 public class PythonApiHealthIndicator implements HealthIndicator {
-
-  //  private static final String FLASK_URL = "http://localhost:5000";
-  @Value("${API_PYTHON_URL:http://app-python:5000}")
-  private String flaskUrl;
+    @Value("${api.python.url}")
+    private String flaskUrl;
 
 
+    private final org.springframework.core.env.Environment env;
+
+    public PythonApiHealthIndicator(org.springframework.core.env.Environment env) {
+        this.env = env;
+    }
 
     @Override
     public Health health() {
-        log.debug("Testando Flask em: {}", flaskUrl);
+
+        String activeProfiles = java.util.Arrays.toString(env.getActiveProfiles());
+        log.debug("Testando Flask em: {} | Perfis: {}", flaskUrl, activeProfiles);
 
         try {
             URL url = new URL(flaskUrl);
@@ -38,42 +43,19 @@ public class PythonApiHealthIndicator implements HealthIndicator {
             int code = conn.getResponseCode();
             conn.disconnect();
 
-            log.debug("Flask respondeu com HTTP {}", code);
-
             return Health.up()
                     .withDetail("status", "Flask ONLINE")
                     .withDetail("url", flaskUrl)
+                    .withDetail("activeProfiles", activeProfiles)
                     .withDetail("httpCode", code)
-                    .withDetail("timestamp", LocalDateTime.now())
-                    .withDetail("note", code == 404 ?
-                            "Endpoint raiz não existe - normal" :
-                            "Respondendo normalmente")
-                    .build();
-
-        } catch (java.net.ConnectException e) {
-            log.warn("Flask OFFLINE: Conexão recusada");
-            return Health.down()
-                    .withDetail("status", "Flask OFFLINE")
-                    .withDetail("url", flaskUrl)
-                    .withDetail("error", "Conexão recusada - Flask não está rodando")
-                    .withDetail("timestamp", LocalDateTime.now())
-                    .build();
-
-        } catch (java.net.SocketTimeoutException e) {
-            log.warn("Flask OFFLINE: Timeout");
-            return Health.down()
-                    .withDetail("status", "Flask OFFLINE")
-                    .withDetail("url", flaskUrl)
-                    .withDetail("error", "Timeout - Flask não respondeu em 2 segundos")
-                    .withDetail("timestamp", LocalDateTime.now())
                     .build();
 
         } catch (Exception e) {
             return Health.down()
                     .withDetail("status", "Flask OFFLINE")
                     .withDetail("url", flaskUrl)
+                    .withDetail("activeProfiles", activeProfiles) 
                     .withDetail("error", e.getMessage())
-                    .withDetail("timestamp", LocalDateTime.now())
                     .build();
         }
     }
