@@ -1,6 +1,5 @@
 package br.com.flightOnTime.controller;
 
-import br.com.flightOnTime.dto.PredictionHistoryDTO;
 import br.com.flightOnTime.dto.PredictionRequestDTO;
 import br.com.flightOnTime.dto.PredictionResponseDTO;
 import br.com.flightOnTime.dto.StatusResponseDTO;
@@ -12,12 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/predict")

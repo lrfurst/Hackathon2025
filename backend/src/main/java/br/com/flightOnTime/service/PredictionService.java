@@ -1,12 +1,11 @@
 package br.com.flightOnTime.service;
 
 
-import br.com.flightOnTime.dto.PredictionHistoryDTO;
 import br.com.flightOnTime.dto.PredictionRequestDTO;
 import br.com.flightOnTime.dto.PredictionResponseDTO;
 import br.com.flightOnTime.dto.StatusResponseDTO;
 import br.com.flightOnTime.entity.PredictionEntity;
-import br.com.flightOnTime.exception.PrevisaoNaoEncontrada;
+import br.com.flightOnTime.infra.exception.PredictionNotFound;
 import br.com.flightOnTime.repository.PredictionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,8 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -46,7 +43,7 @@ import java.util.stream.Collectors;
                 .bodyValue(request)
                 .retrieve()
                 .onStatus(status -> status.isError(),
-                        clientResponse -> Mono.error(new PrevisaoNaoEncontrada("API Python offline ou erro no modelo")))
+                        clientResponse -> Mono.error(new PredictionNotFound("API Python offline ou erro no modelo")))
                 .bodyToMono(PredictionResponseDTO.class)
                 .block();
 

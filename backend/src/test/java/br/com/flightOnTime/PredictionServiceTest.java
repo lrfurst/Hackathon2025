@@ -4,7 +4,7 @@ import br.com.flightOnTime.dto.PredictionRequestDTO;
 import br.com.flightOnTime.dto.PredictionResponseDTO;
 import br.com.flightOnTime.dto.StatusResponseDTO;
 import br.com.flightOnTime.entity.PredictionEntity;
-import br.com.flightOnTime.exception.PrevisaoNaoEncontrada;
+import br.com.flightOnTime.infra.exception.PredictionNotFound;
 import br.com.flightOnTime.repository.PredictionRepository;
 import br.com.flightOnTime.service.PredictionService;
 import okhttp3.mockwebserver.MockResponse;
@@ -89,7 +89,7 @@ void getPrediction_Success() {
 		mockWebServer.enqueue(new MockResponse().setResponseCode(404));
 		PredictionRequestDTO request = new PredictionRequestDTO();
 		request.setOrigem("GIG");
-		assertThrows(PrevisaoNaoEncontrada.class, () -> {
+		assertThrows(PredictionNotFound.class, () -> {
 			predictionService.getPrediction(request);
 		});
 
