@@ -1,0 +1,24 @@
+{
+  "airline_encoder": {
+    "AA": 0,
+    "DL": 1,
+    "UA": 2,
+    "WN": 3,
+    "B6": 4
+  },
+  "route_encoder": {
+    "JFK-LAX": 0,
+    "ATL-DFW": 1,
+    "ORD-DEN": 2,
+    "LAX-JFK": 3
+  },
+  "distance_stats": {
+    "min_distance": 100.0,
+    "max_distance": 4000.0
+  },
+  "metadata": {
+    "created_at": "2026-01-15T21:57:06.893521",
+    "version": "1.0.0",
+    "description": "Encoders de exemplo para MVP"
+  }
+}
