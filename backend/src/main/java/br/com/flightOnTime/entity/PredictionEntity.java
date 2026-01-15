@@ -28,4 +28,11 @@ public class PredictionEntity {
     private Double probabilidade;
     @Column(name = "dataConsulta", nullable = false)
     private LocalDateTime dataConsulta;
+    @Column(name = "hora_dia")
+    private String horaDia;
+    @Column(name = "dia_semana")
+    private int diaSemana;
+
+
+
 }
