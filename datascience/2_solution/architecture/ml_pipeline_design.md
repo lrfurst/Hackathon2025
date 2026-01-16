@@ -1,21 +1,13 @@
 # 🏗️ ML Pipeline Design - FlightOnTime Pro
+**Data:** 16/01/2026 | **Responsável:** @ananda.matos
 
-**Responsável:** @ananda.matos
-**Algoritmo Base:** LogisticRegression (class_weight='balanced')
-**Métrica Primária:** Recall (> 0.75)
+## Steps: input → transform → predict → output
+1. **Input:** JSON (5 campos: Origin, Dest, DepTime, DayOfWeek, Carrier).
+2. **Transform:** Encoder simples (OHE) e Scaler.
+3. **Predict:** LogisticRegression(class_weight='balanced').
+4. **Output:** {previsao: int, probabilidade: float, custo_evitado: float}
 
-## 1. Fluxo End-to-End
-O pipeline foi desenhado para baixa latência, priorizando a identificação de atrasos (Recall) para minimizar custos de operação.
-
-
-
-- **Input:** JSON com 5 campos (Origin, Dest, DepTime, DayOfWeek, Carrier).
-- **Transform:** One-Hot Encoding (OHE) simplificado + Standard Scaling.
-- **Predict:** Logistic Regression (Inferência < 100ms).
-- **Output:** JSON com `previsao`, `probabilidade` e `custo_evitado`.
-
-## 2. Justificativa Técnica
-Optou-se por Regressão Logística em vez de Ensembles (RandomForest/XGBoost) para garantir:
-1. **Integração em 48h:** Menor complexidade de serialização (Pickle/Joblib).
-2. **Interpretabilidade:** Pesos dos coeficientes claros para o Backend Java.
-3. **Performance:** Cumprimento do timeout de 2s com folga.
+## Escolha do Algoritmo
+- **Modelo:** Regressão Logística.
+- **Justificativa:** Menor latência, integração rápida em 48h e facilidade de depuração em relação a Ensembles.
+- **Métrica Alvo:** RECALL > 0.75.
