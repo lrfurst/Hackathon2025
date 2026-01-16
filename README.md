@@ -72,41 +72,160 @@ O serviço expõe um endpoint principal responsável por receber os dados do voo
 
 ---
 
-### 📍 Endpoint Principal
+## 🏗️ Arquitetura
+
+A API segue o modelo de **arquitetura em camadas**, promovendo organização, desacoplamento e facilidade de manutenção.
+
+### 📂 Estrutura de Pacotes
+```text
+br.com.flightOnTime
+├── config
+│   ├── PythonApiHealthIndicator
+│   └── WebClientConfig
+├── controller
+│   └── PredictionController
+├── dto
+│   ├── ErroResponseDTO
+│   ├── PredictionRequestDTO
+│   ├── PredictionResponseDTO
+│   ├── ValidandoCampos
+│   └── ValidarCampos
+├── entity
+│   └── PredictionEntity
+├── exception
+│   └── PrevisaoNaoEncontrada
+├── infra
+│   └── ExcecoesGlobais
+├── repository
+│   └── PredictionRepository
+└── service
+    └── FlightOnTimeJavaApplication
+```
+---
+
+## 📦 Descrição dos Pacotes
+
+`controller`
+- Contém os endpoints REST da aplicação.
+- Responsável por receber requisições HTTP e retornar respostas.
+  
+`service`
+- Camada de regras de negócio.
+- Responsável pela integração com a API externa em Python que executa o modelo preditivo.
+- Orquestra chamadas entre controller, repository e API externa.
+  
+`dto`
+- Define os Data Transfer Objects (DTOs).
+- Utilizados como entrada e saída da API, garantindo desacoplamento do modelo interno.
+  
+`entity`
+- Representa as entidades do domínio.
+- Mapeadas para o banco de dados utilizando JPA/Hibernate.
+  
+`repository`
+- Camada de acesso a dados.
+- Utiliza Spring Data JPA para persistência e consultas.
+
+`config`
+- Contém classes de configuração da aplicação.
+- Inclui a configuração do WebClient, usado na comunicação com a API Python.
+- Possui também um Health Check para verificar a disponibilidade da API Python.
+
+`infra.exception`
+- Camada responsável pelo tratamento global de erros.
+- Possui um `@ControllerAdvice` para padronizar respostas de erro.
+- Exemplo de exceção personalizada:
+- `PredictionNotFound`: lançada quando uma previsão não é encontrada.
+---
+
+## 📍 Endpoint Principal
 
 **POST** `/predict`
 
+Envia os dados de um voo para o modelo preditivo e retorna a probabilidade de atraso.
+
+#### 📥 Exemplo de Request
+```json
+{
+  "companhia": "LATAM",
+  "origem": "GRU",
+  "destino": "SSA",
+  "dataPartida": "10/01/2026",
+  "distanciaKm": 1500
+}
+```
+#### 📤 Exemplo de Response
+```json
+{
+  "probabilidadeAtraso": 0.78,
+  "previsao": "ATRASADO"
+}
+```
+**GET**  `/stats`
+
+Retorna estatísticas agregadas, com base exclusivamente nos dados armazenados no banco.
+
+#### 📤 Exemplo de Response
+```json
+{
+  "totalVoos": 120,
+  "voosAtrasados": 45,
+  "percentualAtraso": 37.5
+}
+```
+---
+## ✅ Validações de Entrada
+
+A API utiliza Bean Validation (Jakarta Validation) para garantir a consistência dos dados recebidos, principalmente no endpoint /predict.
+
+Campos validados no PredictionRequestDTO:
+- `companhia`, `origem` e `destino`: Campos obrigatórios (`@NotBlank`).
+- `data_partida`: Deve seguir o formato `yyyy-MM-dd` e não pode ser uma data retroativa.
+- `distancia_km`: Deve ser obrigatoriamente um valor positivo (`@Positive`).
+  
+Em caso de dados inválidos, a API retorna um erro estruturado via `ErroResponseDTO`, facilitando a correção por parte do cliente.
+
+---
+## ⚠️ Tratamento de Erros
+Erros de validação e exceções de negócio são tratados globalmente pelo  `GlobalExceptionHandler`.
+
+As respostas de erro seguem um padrão unificado por meio do `ErroResponseDTO`, garantindo mensagens claras e consistentes para o consumidor da API.
+
+---
+## 🧪 Testes Automatizados
+
+A aplicação conta com testes automatizados para garantir qualidade e confiabilidade.
+
+### 📂 Estrutura de Testes
+```text
+src/test/java
+└── br.com.flightOnTime
+    ├── PredictionControllerTest
+    └── PredictionServiceTest
+```
+- **PredictionControllerTest**: Valida o comportamento dos endpoints, códigos de status HTTP e o fluxo de validação de entrada.
+- **PredictionServiceTest**: Foca nas regras de negócio e simula (mock) a integração com a API Python para garantir que o processamento interno esteja correto.
+---
+## 📘 Documentação com Swagger
+
+A API utiliza Swagger (OpenAPI) para documentação e testes dos endpoints.
+
+#### 📍 Acesso:
+
+http://localhost:8080/swagger-ui/index.html
+
 ---
 
-### 📥 Entrada (Request)
+## 🛠️ Tecnologias Utilizadas
 
-A API recebe um objeto JSON contendo as principais informações do voo, como:
-
-- Companhia aérea  
-- Aeroporto de origem  
-- Data do voo  
-- Distância do trajeto  
-
-Esses dados são utilizados como **variáveis de entrada para o modelo de predição**.
-
----
-
-### 📤 Saída (Response)
-
-A resposta da API é um objeto JSON contendo:
-
-- **Status do voo:** classificação binária (*Pontual* ou *Atrasado*)  
-- **Probabilidade de atraso:** valor percentual associado à predição (0 a 1)  
-
-Essas informações permitem que usuários e sistemas consumidores **tomem decisões de forma antecipada**.
-
----
-
-### 🛠️ Tecnologias Utilizadas
-
-- Java  
+- Java 21
 - Spring Boot  
-- API REST  
+- Spring Web
+- Spring WebClient
+- Spring Data JPA
+- Swagger / OpenAPI
+- Banco de Dados Relacional
+- JUnit e Mockito
 
 ---
 
