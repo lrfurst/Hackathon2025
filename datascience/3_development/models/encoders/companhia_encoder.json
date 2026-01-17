@@ -1,0 +1,6 @@
+{
+  "LATAM": 0,
+  "GOL": 1,
+  "AZUL": 2,
+  "UNKNOWN": -1
+}
