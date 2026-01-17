@@ -1,0 +1,249 @@
+{
+  "info": {
+    "name": "Flight On Time - API Collection",
+    "description": "Coleção Postman para testar a API de predição de atrasos de voo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "API Principal (Porta 8000)",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Informações da API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": [""]
+            }
+          }
+        },
+        {
+          "name": "Predição - LATAM GRU→CGH",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companhia\": \"LATAM\",\n  \"aeroporto_origem\": \"GRU\",\n  \"aeroporto_destino\": \"CGH\",\n  \"hora_partida\": \"14:30\",\n  \"distancia\": 100.0\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/predict",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["predict"]
+            }
+          }
+        },
+        {
+          "name": "Predição - GOL SDU→BSB",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companhia\": \"GOL\",\n  \"aeroporto_origem\": \"SDU\",\n  \"aeroporto_destino\": \"BSB\",\n  \"hora_partida\": \"08:15\",\n  \"distancia\": 850.5\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/predict",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["predict"]
+            }
+          }
+        },
+        {
+          "name": "Predição - AZUL VCP→POA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companhia\": \"AZUL\",\n  \"aeroporto_origem\": \"VCP\",\n  \"aeroporto_destino\": \"POA\",\n  \"hora_partida\": \"16:45\",\n  \"distancia\": 650.2\n}"
+            },
+            "url": {
+              "raw": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["predict"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "API Backup Mock (Porta 8001)",
+      "item": [
+        {
+          "name": "Health Check - Backup",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8001/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Status do Backup",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8001/backup/status",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": ["backup", "status"]
+            }
+          }
+        },
+        {
+          "name": "Exemplos de Requests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8001/examples",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": ["examples"]
+            }
+          }
+        },
+        {
+          "name": "Predição Mock - Cenário Padrão",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companhia\": \"LATAM\",\n  \"aeroporto_origem\": \"GRU\",\n  \"aeroporto_destino\": \"CGH\",\n  \"hora_partida\": \"14:30\",\n  \"distancia\": 100.0\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8001/predict",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": ["predict"]
+            }
+          }
+        },
+        {
+          "name": "Predição Mock - Voos GOL (Menos Atrasos)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companhia\": \"GOL\",\n  \"aeroporto_origem\": \"SDU\",\n  \"aeroporto_destino\": \"BSB\",\n  \"hora_partida\": \"08:15\",\n  \"distancia\": 850.5\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8001/predict",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": ["predict"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Backend Java (Porta 8080)",
+      "item": [
+        {
+          "name": "Predição via Java Backend",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companhia\": \"LATAM\",\n  \"aeroporto_origem\": \"GRU\",\n  \"aeroporto_destino\": \"CGH\",\n  \"hora_partida\": \"14:30\",\n  \"distancia\": 100.0\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/predict",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "predict"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url_api",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "base_url_mock",
+      "value": "http://localhost:8001",
+      "type": "string"
+    },
+    {
+      "key": "base_url_java",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}

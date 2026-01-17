@@ -23,6 +23,49 @@ http://localhost:8000
 
 ---
 
+## ⚡ Setup em 5 Passos
+
+### 1. Instalar Dependências
+```bash
+# No diretório raiz do projeto
+pip install -r requirements.txt
+pip install -r 4_integration/requirements.integration.txt
+```
+
+### 2. Inicializar API Python
+```bash
+# Navegar para o diretório da API
+cd 3_development/api
+
+# Iniciar servidor
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 3. Verificar Health Check
+```bash
+curl http://localhost:8000/health
+# Resposta esperada: {"status": "ok"}
+```
+
+### 4. Testar Predição
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"companhia_aerea":"AA","aeroporto_origem":"JFK","aeroporto_destino":"LAX","data_hora_partida":"2024-01-15T14:30:00","distancia_km":3980}'
+```
+
+### 5. Integrar no Java
+```java
+// Adicionar ao seu código Java
+RestTemplate restTemplate = new RestTemplate();
+FlightData flight = new FlightData();
+// ... configurar dados do voo
+PredictionResponse response = restTemplate.postForObject(
+    "http://localhost:8000/predict", flight, PredictionResponse.class);
+```
+
+---
+
 ## Fluxo de Integração
 
 ```
