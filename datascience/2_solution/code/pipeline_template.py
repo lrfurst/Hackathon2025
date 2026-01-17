@@ -1,3 +1,0 @@
-# Template para integração rápida
-import joblib
-# To be implemented...

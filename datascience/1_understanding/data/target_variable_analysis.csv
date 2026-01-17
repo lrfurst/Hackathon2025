@@ -1,2 +1,0 @@
-total_flights,delayed_flights,on_time_flights,delay_rate_pct,balance_ratio,baseline_accuracy,target_column,threshold_minutes
-10000,2119,7881,21.19,0.268874508311128,78.81,arr_delay,15
