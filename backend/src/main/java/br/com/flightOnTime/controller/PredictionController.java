@@ -1,6 +1,5 @@
 package br.com.flightOnTime.controller;
 
-import br.com.flightOnTime.dto.PredictionHistoryDTO;
 import br.com.flightOnTime.dto.PredictionRequestDTO;
 import br.com.flightOnTime.dto.PredictionResponseDTO;
 import br.com.flightOnTime.dto.StatusResponseDTO;
@@ -38,9 +37,9 @@ public class PredictionController {
         var response = predictionService.getPrediction(request);
         return ResponseEntity.ok(response);
 
-    }
+    }}
 
-    @GetMapping("/stats")
+    /*@GetMapping("/stats")
     @Operation(
             summary = "Obter estatísticas consolidadas do dia",
             description = "Retorna o volume total de consultas, a quantidade de atrasos previstos e a taxa percentual de ocorrência para o dia atual (desde 00:00)."
@@ -52,5 +51,5 @@ public class PredictionController {
     public ResponseEntity<StatusResponseDTO>showStatus(){
         return ResponseEntity.ok(predictionService.getStatus());
     }
-}
+}*/
 
