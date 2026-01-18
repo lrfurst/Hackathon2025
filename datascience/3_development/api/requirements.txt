@@ -1,5 +1,10 @@
-fastapi
-uvicorn
-pandas
-joblib
-scikit-learn
+cd /Users/am/projects/one/challenges/Hackathon2025/datascience/3_development/api
+cat > requirements.txt << 'EOF'
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+joblib==1.3.2
+scikit-learn==1.3.2
+numpy==1.24.3
+requests==2.31.0
+pydantic==2.5.0
+EOF
