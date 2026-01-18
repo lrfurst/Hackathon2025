@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight On Time - Teste de APIs</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
+        button { background-color: #3498db; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; margin: 10px 0; }
+        button:hover { background-color: #2980b9; }
+        .result { margin-top: 30px; padding: 20px; border-radius: 5px; display: none; text-align: center; }
+        .success-atraso { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .success-pontual { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+        .api-status { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .status-indicator { padding: 5px 10px; border-radius: 3px; font-size: 12px; font-weight: bold; }
+        .status-online { background-color: #d4edda; color: #155724; }
+        .status-offline { background-color: #f8d7da; color: #721c24; }
+        .test-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .test-btn { flex: 1; background-color: #95a5a6; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .row { display: flex; gap: 15px; }
+        .row .form-group { flex: 1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✈️ Flight On Time - Teste de APIs</h1>
+
+        <div class="api-status">
+            <div>
+                <span>API Python (porta 8000): </span>
+                <span id="python-status" class="status-indicator">Verificando...</span>
+            </div>
+            <div>
+                <span>Backend Java (8080): </span>
+                <span id="java-status" class="status-indicator">OFFLINE</span>
+            </div>
+        </div>
+
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="companhia">Companhia Aérea:</label>
+                <select id="companhia" required>
+                    <option value="LATAM">LATAM</option>
+                    <option value="GOL">GOL</option>
+                    <option value="AZUL">AZUL</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="origem">Origem (IATA):</label>
+                    <input type="text" id="origem" placeholder="Ex: GRU" required value="GRU">
+                </div>
+                <div class="form-group">
+                    <label for="destino">Destino (IATA):</label>
+                    <input type="text" id="destino" placeholder="Ex: SSA" required value="SSA">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="hora_dia">Período:</label>
+                    <select id="hora_dia" required>
+                        <option value="manha">Manhã</option>
+                        <option value="tarde">Tarde</option>
+                        <option value="noite">Noite</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dia_semana">Dia da Semana (0-6):</label>
+                    <input type="number" id="dia_semana" min="0" max="6" value="5" required title="0=Dom, 6=Sáb">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="distancia">Distância (km):</label>
+                <input type="number" id="distancia" placeholder="Ex: 2500" required min="1" value="2500">
+            </div>
+
+            <button type="submit" id="submitBtn">🔮 Fazer Predição</button>
+        </form>
+
+        <div class="test-buttons">
+            <button class="test-btn" onclick="loadTestCase('GRU', 'CGH', 500, 'manha', 1)">Curto (Perto/Manhã)</button>
+            <button class="test-btn" onclick="loadTestCase('GRU', 'SSA', 3000, 'noite', 5)">Longo (Longe/Sexta-Noite)</button>
+        </div>
+
+        <div id="result" class="result">
+            <h2 id="resultTitle"></h2>
+            <p id="resultProb"></p>
+            <p id="resultCost"></p>
+        </div>
+    </div>
+
+    <script>
+        async function checkAPIStatus() {
+            try {
+                const res = await fetch('http://127.0.0.1:8000/health');
+                const isOk = res.ok;
+                document.getElementById('python-status').textContent = isOk ? 'ONLINE' : 'OFFLINE';
+                document.getElementById('python-status').className = `status-indicator ${isOk ? 'status-online' : 'status-offline'}`;
+            } catch (e) {
+                document.getElementById('python-status').textContent = 'OFFLINE';
+                document.getElementById('python-status').className = 'status-indicator status-offline';
+            }
+        }
+
+        function loadTestCase(orig, dest, km, hora, dia) {
+            document.getElementById('origem').value = orig;
+            document.getElementById('destino').value = dest;
+            document.getElementById('distancia').value = km;
+            document.getElementById('hora_dia').value = hora;
+            document.getElementById('dia_semana').value = dia;
+        }
+
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const resultDiv = document.getElementById('result');
+            const btn = document.getElementById('submitBtn');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Consultando IA...';
+
+            const payload = {
+                companhia_aerea: document.getElementById('companhia').value,
+                aeroporto_origem: document.getElementById('origem').value,
+                aeroporto_destino: document.getElementById('destino').value,
+                distancia_km: parseFloat(document.getElementById('distancia').value),
+                hora_dia: document.getElementById('hora_dia').value,
+                dia_semana: parseInt(document.getElementById('dia_semana').value)
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                
+                resultDiv.style.display = 'block';
+                resultDiv.className = data.atraso ? 'result success-atraso' : 'result success-pontual';
+                
+                document.getElementById('resultTitle').innerText = data.atraso ? "⚠️ RISCO DE ATRASO" : "✅ VOO PONTUAL";
+                document.getElementById('resultProb').innerText = `Confiança: ${(data.probabilidade * 100).toFixed(2)}%`;
+                document.getElementById('resultCost').innerText = data.avoided_cost > 0 ? `Economia Estimada: $${data.avoided_cost}` : "";
+
+            } catch (err) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                document.getElementById('resultTitle').innerText = "❌ Erro de Conexão";
+                document.getElementById('resultProb').innerText = "A API Python está desligada ou o CORS não foi configurado.";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔮 Fazer Predição';
+            }
+        });
+
+        checkAPIStatus();
+    </script>
+</body>
+</html>
