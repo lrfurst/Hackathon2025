@@ -364,21 +364,23 @@ docker-compose ps
 
 ---
 
-## 👥 Equipe
+# 👥 Equipe
 
 **Equipe H12-25-B-Equipo 22** - Hackathon ONE II - Brasil
 
-### Membros
-- **Ananda Matos** - Tech Lead & Apresentadora
-- Desenvolvedores Backend Java
-- Cientistas de Dados Python
-- Desenvolvedores Frontend
-- Especialistas em DevOps
+### 🚀 Liderança & Data Science
+| Nome | LinkedIn | GitHub | Papel |
+|------|----------|--------|-------|
+| **Ananda Matos** | [linkedin.com/in/anandamatos](https://linkedin.com/in/anandamatos) | [github.com/anandamatos](https://github.com/anandamatos) | **Team Leader** & Data Science |
+| **Luis Ricardo Furst** | [linkedin.com/in/luisfurst](https://linkedin.com/in/luisfurst) | [github.com/lrfurst](https://github.com/lrfurst) | Data Science |
+| **Higor Barreto** | [linkedin.com/in/higor-barreto-1a853b286](https://linkedin.com/in/higor-barreto-1a853b286) | [github.com/HigorFBarreto](https://github.com/HigorFBarreto) | Data Science |
 
-### Agradecimentos
-- **No Country** pela plataforma e mentoria
-- **Oracle** pelo suporte tecnológico
-- **Comunidade** pelo feedback construtivo
+### 💻 Backend Java (Spring Boot)
+| Nome | LinkedIn | GitHub |
+|------|----------|--------|
+| **Sulamita Mendes** | [linkedin.com/in/sulamita-mendes](https://linkedin.com/in/sulamita-mendes) | [github.com/SuuhMendes](https://github.com/SuuhMendes) |
+| **Stéfany Cristina** | [linkedin.com/in/stefanycristinarf](https://linkedin.com/in/stefanycristinarf) | [github.com/Stefanycristina7](https://github.com/Stefanycristina7) |
+| **Carlos Roberto Ribeiro Santos Junior** | [linkedin.com/in/carlos-roberto-dev-java](https://linkedin.com/in/carlos-roberto-dev-java) | [github.com/crrsj](https://github.com/crrsj) |
 
 ---
 
@@ -412,33 +414,6 @@ Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](L
 - **Q2 2026**: Integração com sistemas aeroportuários reais
 - **Q3 2026**: Expansão para outros países da América Latina
 - **Q4 2026**: Sistema de recomendações para otimização de rotas
-
----
-
-**✈️ Flight On Time - Transformando dados em decisões inteligentes para a aviação brasileira.**
-
-*Projeto desenvolvido durante o Hackathon ONE II - Brasil, em parceria com No Country e Oracle.*
-
-
-
-
-# 👥 Equipe
-
-**Equipe H12-25-B-Equipo 22** - Hackathon ONE II - Brasil
-
-### 🚀 Liderança & Data Science
-| Nome | LinkedIn | GitHub | Papel |
-|------|----------|--------|-------|
-| **Ananda Matos** | [linkedin.com/in/anandamatos](https://linkedin.com/in/anandamatos) | [github.com/anandamatos](https://github.com/anandamatos) | **Team Leader** & Data Science |
-| **Luis Ricardo Furst** | [linkedin.com/in/luisfurst](https://linkedin.com/in/luisfurst) | [github.com/lrfurst](https://github.com/lrfurst) | Data Science |
-| **Higor Barreto** | [linkedin.com/in/higor-barreto-1a853b286](https://linkedin.com/in/higor-barreto-1a853b286) | [github.com/HigorFBarreto](https://github.com/HigorFBarreto) | Data Science |
-
-### 💻 Backend Java (Spring Boot)
-| Nome | LinkedIn | GitHub |
-|------|----------|--------|
-| **Sulamita Mendes** | [linkedin.com/in/sulamita-mendes](https://linkedin.com/in/sulamita-mendes) | [github.com/SuuhMendes](https://github.com/SuuhMendes) |
-| **Stéfany Cristina** | [linkedin.com/in/stefanycristinarf](https://linkedin.com/in/stefanycristinarf) | [github.com/Stefanycristina7](https://github.com/Stefanycristina7) |
-| **Carlos Roberto Ribeiro Santos Junior** | [linkedin.com/in/carlos-roberto-dev-java](https://linkedin.com/in/carlos-roberto-dev-java) | [github.com/crrsj](https://github.com/crrsj) |
 
 ---
 
