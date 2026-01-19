@@ -39,6 +39,6 @@ public class PredictionService {
                         )
                 )
                 .bodyToMono(PredictionResponseDTO.class)
-                .block(); // OK para MVP
+                .block(); 
     }
 }
