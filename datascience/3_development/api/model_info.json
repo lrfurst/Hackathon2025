@@ -1,0 +1,9 @@
+{
+  "model_info": {
+    "path": "/Users/am/projects/one/challenges/Hackathon2025/datascience/3_development/api/../models/logistic_regression_optimized_final.joblib",
+    "type": "<class 'sklearn.linear_model._logistic.LogisticRegression'>",
+    "n_features": 7,
+    "has_coefficients": true
+  },
+  "important_note": "A ORDEM DAS FEATURES NO SEU main.py DEVE SER EXATAMENTE A MESMA QUE O MODELO ESPERA!"
+}

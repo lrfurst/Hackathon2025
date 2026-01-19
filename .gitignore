@@ -1,2 +1,16 @@
-datascience/1_eda/data/raw_data
-.idea/
+front-ux/
+
+# VS Code
+.vscode/
+
+# Logs e processos
+*.log
+*.pid
+*.backup
+
+# Python cache
+**/__pycache__/
+*.pyc
+
+# Configurações locais
+application-local.properties

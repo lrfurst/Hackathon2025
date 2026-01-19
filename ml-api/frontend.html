@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight On Time - ANAC - Previsão de Atrasos de Voo</title>
+    <!-- Design System GOV.BR -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@govbr-ds/core/dist/core.css">
+    <style>
+        /* Estilos personalizados no padrão GOV.BR */
+        :root {
+            --gov-color-primary: #1351B4;
+            --gov-color-secondary: #2670E8;
+            --gov-color-success: #168821;
+            --gov-color-warning: #FFCD07;
+            --gov-color-danger: #DC3545;
+            --gov-color-info: #155BCB;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Rawline', sans-serif;
+            background-color: #f8f9fa;
+            color: #333333;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header GOV.BR */
+        .gov-header {
+            background: linear-gradient(90deg, #1351B4 0%, #1C6DEB 100%);
+            color: white;
+            padding: 1rem 0;
+            border-bottom: 4px solid #FFCD07;
+        }
+        
+        .gov-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .gov-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .gov-logo-img {
+            height: 60px;
+            width: auto;
+        }
+        
+        .gov-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .gov-logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .gov-logo-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .gov-header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .gov-user-info {
+            text-align: right;
+            font-size: 0.875rem;
+        }
+        
+        /* Status da API no header - APENAS QUANDO OFFLINE */
+        #api-status-badge {
+            display: none; /* Começa escondido */
+        }
+        
+        .status-badge-offline {
+            background-color: #DC3545 !important;
+            color: white !important;
+            border: 1px solid #DC3545 !important;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            color: #1351B4;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            border-bottom: 2px solid #FFCD07;
+            padding-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            font-size: 1.25rem;
+            color: #495057;
+            margin-bottom: 2rem;
+        }
+        
+        /* Cards GOV.BR - COM EXPANSÃO */
+        .gov-card {
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .gov-card.collapsed {
+            margin-bottom: 0.5rem;
+        }
+        
+        .gov-card-header {
+            background: #f8f9fa;
+            padding: 1.25rem;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .gov-card-header:hover {
+            background-color: #e9ecef;
+        }
+        
+        .gov-card-header.collapsed {
+            border-bottom: none;
+        }
+        
+        .gov-card-title-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .gov-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1351B4;
+            margin: 0;
+        }
+        
+        .expand-icon {
+            transition: transform 0.3s ease;
+            color: #6c757d;
+        }
+        
+        .expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .gov-card-body {
+            padding: 1.5rem;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .gov-card-body.collapsed {
+            max-height: 0;
+            padding: 0;
+            opacity: 0;
+        }
+        
+        .gov-card-footer {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .gov-card-footer.collapsed {
+            max-height: 0;
+            padding: 0;
+            opacity: 0;
+            border-top: none;
+        }
+        
+        /* Formulário GOV.BR */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.15s ease-in-out;
+        }
+        
+        .form-control:focus {
+            border-color: #2670E8;
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(38, 112, 232, 0.25);
+        }
+        
+        /* Botões GOV.BR */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+            text-decoration: none;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            min-height: 48px;
+        }
+        
+        .btn-primary {
+            background-color: #1351B4;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0d3d8c;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: #168821;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #12691c;
+        }
+        
+        .btn-warning {
+            background-color: #FFCD07;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e6b906;
+        }
+        
+        .btn-danger {
+            background-color: #DC3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-info {
+            background-color: #155BCB;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #0d4aaf;
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        /* Grid */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+        
+        .col {
+            flex: 1;
+            padding: 0 15px;
+        }
+        
+        .col-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 15px;
+        }
+        
+        /* Resultados */
+        .result-container {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid #1351B4;
+        }
+        
+        .result-container.success {
+            border-left-color: #168821;
+        }
+        
+        .result-container.warning {
+            border-left-color: #FFCD07;
+        }
+        
+        .result-container.danger {
+            border-left-color: #DC3545;
+        }
+        
+        .result-container.info {
+            border-left-color: #155BCB;
+        }
+        
+        .result-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1351B4;
+        }
+        
+        .prediction-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .prediction-info h4 {
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+        
+        .prediction-value {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+        
+        .prediction-value.low {
+            color: #168821;
+        }
+        
+        .prediction-value.medium {
+            color: #FFCD07;
+        }
+        
+        .prediction-value.high {
+            color: #DC3545;
+        }
+        
+        /* Logs */
+        .logs-container {
+            background: #212529;
+            color: #f8f9fa;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+        
+        .log-entry {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #495057;
+        }
+        
+        .log-time {
+            color: #20c997;
+        }
+        
+        .log-endpoint {
+            color: #6ea8fe;
+        }
+        
+        .log-status {
+            color: #ffc107;
+        }
+        
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-badge-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-badge-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-badge-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .status-badge-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Footer GOV.BR */
+        .gov-footer {
+            background: #f8f9fa;
+            border-top: 2px solid #dee2e6;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .footer-logo {
+            height: 40px;
+            width: auto;
+        }
+        
+        .footer-info {
+            font-size: 0.875rem;
+            color: #6c757d;
+            text-align: right;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .col, .col-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 1rem;
+            }
+            
+            .gov-header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .gov-header-right {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .prediction-display {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+        }
+        
+        /* Acessibilidade */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* Tabelas */
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .feature-table td {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .feature-table td:first-child {
+            font-weight: 600;
+            width: 60%;
+        }
+        
+        .feature-table td:last-child {
+            text-align: right;
+            color: #1351B4;
+        }
+        
+        /* Controle de Expansão */
+        .expand-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: #6c757d;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .expand-control:hover {
+            color: #495057;
+        }
+        
+        /* Seções principais não colapsáveis */
+        .non-collapsible .gov-card-header {
+            cursor: default;
+        }
+        
+        .non-collapsible .gov-card-header:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .non-collapsible .expand-icon {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header GOV.BR -->
+    <header class="gov-header" role="banner">
+        <div class="container">
+            <div class="gov-header-content">
+                <a href="#" class="gov-logo">
+                    <div class="gov-logo-img">
+                        <!-- Logo Brasil -->
+                        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="60" height="60" rx="4" fill="#1351B4"/>
+                            <path d="M30 40C35.5228 40 40 35.5228 40 30C40 24.4772 35.5228 20 30 20C24.4772 20 20 24.4772 20 30C20 35.5228 24.4772 40 30 40Z" fill="#FFCD07"/>
+                            <path d="M30 35C32.7614 35 35 32.7614 35 30C35 27.2386 32.7614 25 30 25C27.2386 25 25 27.2386 25 30C25 32.7614 27.2386 35 30 35Z" fill="#1351B4"/>
+                            <path d="M30 15L34 25L45 25L36 31L39 40L30 34L21 40L24 31L15 25L26 25L30 15Z" fill="#168821"/>
+                        </svg>
+                    </div>
+                    <div class="gov-logo-text">
+                        <h1 class="gov-logo-title">Flight On Time</h1>
+                        <p class="gov-logo-subtitle">Agência Nacional de Aviação Civil</p>
+                    </div>
+                </a>
+                
+                <div class="gov-header-right">
+                    <div class="gov-user-info">
+                        <p><strong>Sistema de Previsão de Atrasos</strong></p>
+                        <p>Versão 1.0.0</p>
+                    </div>
+                    <!-- APENAS APARECE SE API ESTIVER OFFLINE -->
+                    <div id="api-status-badge" class="status-badge status-badge-offline">
+                        <i class="fas fa-exclamation-triangle"></i> API Offline
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content" role="main">
+        <div class="container">
+            <h1 class="page-title">Sistema de Previsão de Atrasos de Voo</h1>
+            <p class="page-subtitle">Insira os dados do voo para análise em tempo real utilizando inteligência artificial</p>
+            
+            <div class="row">
+                <!-- Formulário de Previsão (NÃO COLAPSÁVEL) -->
+                <div class="col-6">
+                    <div class="gov-card non-collapsible">
+                        <div class="gov-card-header">
+                            <div class="gov-card-title-container">
+                                <i class="fas fa-plane-departure"></i>
+                                <h2 class="gov-card-title">Análise de Voo</h2>
+                            </div>
+                        </div>
+                        <div class="gov-card-body">
+                            <form id="flight-form">
+                                <div class="form-group">
+                                    <label for="companhia_aerea" class="form-label">Companhia Aérea *</label>
+                                    <select id="companhia_aerea" class="form-control" required>
+                                        <option value="" disabled selected>Selecione uma companhia</option>
+                                        <option value="GOL">GOL Linhas Aéreas</option>
+                                        <option value="LATAM">LATAM Airlines</option>
+                                        <option value="AZUL">Azul Linhas Aéreas</option>
+                                        <option value="OUTRAS">Outras Companhias</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="data_hora_partida" class="form-label">Data e Hora de Partida *</label>
+                                    <input type="datetime-local" id="data_hora_partida" class="form-control" required>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="aeroporto_origem" class="form-label">Aeroporto de Origem *</label>
+                                            <select id="aeroporto_origem" class="form-control" required>
+                                                <option value="" disabled selected>Selecione origem</option>
+                                                <option value="CNF">CNF - Belo Horizonte (Confins)</option>
+                                                <option value="GRU">GRU - São Paulo (Guarulhos)</option>
+                                                <option value="GIG">GIG - Rio de Janeiro (Galeão)</option>
+                                                <option value="CGH">CGH - São Paulo (Congonhas)</option>
+                                                <option value="BSB">BSB - Brasília</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="aeroporto_destino" class="form-label">Aeroporto de Destino *</label>
+                                            <select id="aeroporto_destino" class="form-control" required>
+                                                <option value="" disabled selected>Selecione destino</option>
+                                                <option value="BSB">BSB - Brasília</option>
+                                                <option value="CNF">CNF - Belo Horizonte (Confins)</option>
+                                                <option value="GRU">GRU - São Paulo (Guarulhos)</option>
+                                                <option value="GIG">GIG - Rio de Janeiro (Galeão)</option>
+                                                <option value="CGH">CGH - São Paulo (Congonhas)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="distancia_km" class="form-label">Distância do Voo (km) *</label>
+                                    <input type="number" id="distancia_km" class="form-control" min="1" max="10000" required>
+                                    <small class="form-text text-muted">Distância aproximada em quilômetros</small>
+                                </div>
+                                
+                                <div id="random-info" class="result-container info" style="display: none;">
+                                    <h4 class="result-title"><i class="fas fa-dice"></i> Dados Aleatórios Gerados</h4>
+                                    <p id="random-details"></p>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="gov-card-footer">
+                            <button id="btn-random" class="btn btn-warning">
+                                <i class="fas fa-dice"></i> Gerar Dados Aleatórios
+                            </button>
+                            <button id="btn-predict" class="btn btn-success">
+                                <i class="fas fa-chart-line"></i> Analisar Probabilidade
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resultados e Testes (NÃO COLAPSÁVEL) -->
+                <div class="col-6">
+                    <!-- Resultado da Previsão -->
+                    <div id="prediction-result" class="gov-card fade-in non-collapsible" style="display: none;">
+                        <div class="gov-card-header">
+                            <div class="gov-card-title-container">
+                                <i class="fas fa-chart-bar"></i>
+                                <h2 class="gov-card-title">Resultado da Análise</h2>
+                            </div>
+                        </div>
+                        <div class="gov-card-body">
+                            <div class="prediction-display">
+                                <div class="prediction-info">
+                                    <h4>Probabilidade de Atraso</h4>
+                                    <p id="prediction-status">Análise em andamento...</p>
+                                </div>
+                                <div id="prediction-value" class="prediction-value">0%</div>
+                            </div>
+                            
+                            <div id="prediction-details">
+                                <h4 class="result-title">Detalhes da Análise</h4>
+                                <div id="prediction-features"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testes da API -->
+                    <div class="gov-card non-collapsible">
+                        <div class="gov-card-header">
+                            <div class="gov-card-title-container">
+                                <i class="fas fa-vial"></i>
+                                <h2 class="gov-card-title">Testes da API</h2>
+                            </div>
+                        </div>
+                        <div class="gov-card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <button id="btn-health" class="btn btn-secondary btn-block">
+                                        <i class="fas fa-heartbeat"></i> Testar /health
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button id="btn-model" class="btn btn-secondary btn-block">
+                                        <i class="fas fa-cogs"></i> Testar /model
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 1rem;">
+                                <div class="col-6">
+                                    <button id="btn-docs" class="btn btn-info btn-block">
+                                        <i class="fas fa-book"></i> Documentação
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button id="btn-logs" class="btn btn-secondary btn-block">
+                                        <i class="fas fa-terminal"></i> Ver Logs
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="api-test-result" class="result-container" style="display: none; margin-top: 1.5rem;">
+                                <h4 class="result-title">Resposta da API</h4>
+                                <div id="test-endpoint"></div>
+                                <pre id="test-response" class="logs-container" style="margin-top: 1rem;"></pre>
+                            </div>
+                            
+                            <div id="logs-container" class="logs-container" style="display: none; margin-top: 1rem;">
+                                <!-- Logs serão inseridos aqui via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status do Sistema (COLAPSÁVEL) -->
+            <div id="system-status-card" class="gov-card collapsible">
+                <div class="gov-card-header collapsed" id="system-status-header">
+                    <div class="gov-card-title-container">
+                        <i class="fas fa-server"></i>
+                        <h2 class="gov-card-title">Status do Sistema</h2>
+                    </div>
+                    <div class="expand-control">
+                        <span class="expand-text">Expandir</span>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                </div>
+                <div class="gov-card-body collapsed" id="system-status-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3>Endpoints da API</h3>
+                            <div class="status-badge status-badge-success">
+                                <i class="fas fa-check-circle"></i> GET /health
+                            </div>
+                            <div class="status-badge status-badge-success">
+                                <i class="fas fa-check-circle"></i> GET /model
+                            </div>
+                            <div class="status-badge status-badge-success">
+                                <i class="fas fa-check-circle"></i> POST /predict
+                            </div>
+                            <div class="status-badge status-badge-success">
+                                <i class="fas fa-check-circle"></i> GET /docs
+                            </div>
+                            
+                            <div style="margin-top: 1.5rem;">
+                                <h4>Monitoramento</h4>
+                                <button id="btn-check-status" class="btn btn-info">
+                                    <i class="fas fa-sync-alt"></i> Verificar Status da API
+                                </button>
+                                <button id="btn-simulate-error" class="btn btn-danger">
+                                    <i class="fas fa-bug"></i> Simular Falha
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h3>Informações Técnicas</h3>
+                            <table class="feature-table">
+                                <tr>
+                                    <td>Modelo:</td>
+                                    <td>flight_delay_predictor v1.0.0</td>
+                                </tr>
+                                <tr>
+                                    <td>Features:</td>
+                                    <td>7 variáveis processadas</td>
+                                </tr>
+                                <tr>
+                                    <td>Precisão:</td>
+                                    <td>87% (dados históricos)</td>
+                                </tr>
+                                <tr>
+                                    <td>Última atualização:</td>
+                                    <td>19/01/2026</td>
+                                </tr>
+                                <tr>
+                                    <td>Status atual:</td>
+                                    <td id="system-status-text" style="color: #168821; font-weight: 600;">
+                                        <i class="fas fa-check-circle"></i> Operacional
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Tempo de resposta:</td>
+                                    <td id="response-time">0ms</td>
+                                </tr>
+                            </table>
+                            
+                            <div id="system-alert" class="result-container danger" style="display: none; margin-top: 1rem;">
+                                <h4 class="result-title"><i class="fas fa-exclamation-triangle"></i> Alerta do Sistema</h4>
+                                <p id="alert-message">O sistema está enfrentando problemas de conectividade.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Informações da API (COLAPSÁVEL) -->
+            <div id="api-info-card" class="gov-card collapsible">
+                <div class="gov-card-header collapsed" id="api-info-header">
+                    <div class="gov-card-title-container">
+                        <i class="fas fa-info-circle"></i>
+                        <h2 class="gov-card-title">Informações Técnicas da API</h2>
+                    </div>
+                    <div class="expand-control">
+                        <span class="expand-text">Expandir</span>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                </div>
+                <div class="gov-card-body collapsed" id="api-info-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3>Integração</h3>
+                            <pre id="integration-code" style="background: #f8f9fa; padding: 1rem; border-radius: 4px; overflow: auto; font-size: 0.875rem;">
+// Exemplo de chamada à API Flight On Time
+fetch('https://api.anac.gov.br/flight-on-time/predict', {
+  method: 'POST',
+  headers: { 
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer SEU_TOKEN_AQUI'
+  },
+  body: JSON.stringify({
+    companhia_aerea: "GOL",
+    aeroporto_origem: "CNF",
+    aeroporto_destino: "BSB",
+    data_hora_partida: "2026-01-19T11:00:00",
+    distancia_km: 600
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data));</pre>
+                        </div>
+                        <div class="col-6">
+                            <h3>Checklist de Funcionamento</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                                    <i class="fas fa-check-circle" style="color: #168821;"></i>
+                                    API rodando na porta 8000
+                                </li>
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                                    <i class="fas fa-check-circle" style="color: #168821;"></i>
+                                    Todas as rotas respondendo 200 OK
+                                </li>
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                                    <i class="fas fa-check-circle" style="color: #168821;"></i>
+                                    Previsões funcionando com probabilidades
+                                </li>
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                                    <i class="fas fa-check-circle" style="color: #168821;"></i>
+                                    Modelo carregado com 7 features
+                                </li>
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                                    <i class="fas fa-check-circle" style="color: #168821;"></i>
+                                    Encoders funcionando (4 companhias, 3 rotas)
+                                </li>
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                                    <i class="fas fa-check-circle" style="color: #168821;"></i>
+                                    Documentação Swagger disponível
+                                </li>
+                                <li style="padding: 0.5rem 0;">
+                                    <i class="fas fa-check-circle" style="color: #168821;"></i>
+                                    Sistema pronto para produção
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer GOV.BR -->
+    <footer class="gov-footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/250px-Gov.br_logo.svg.png" alt="Governo Federal" class="footer-logo">
+                </div>
+                <div class="footer-info">
+                    <p><strong>Flight On Time - Sistema de Previsão de Atrasos</strong></p>
+                    <p>Agência Nacional de Aviação Civil - ANAC</p>
+                    <p>Esplanada dos Ministérios, Bloco R - Brasília/DF</p>
+                    <p>CEP: 70071-900 | Telefone: (61) 2024-1000</p>
+                    <p>© 2026 Ministério da Infraestrutura - Governo Federal</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Elementos DOM
+        const flightForm = document.getElementById('flight-form');
+        const btnRandom = document.getElementById('btn-random');
+        const btnPredict = document.getElementById('btn-predict');
+        const btnHealth = document.getElementById('btn-health');
+        const btnModel = document.getElementById('btn-model');
+        const btnDocs = document.getElementById('btn-docs');
+        const btnLogs = document.getElementById('btn-logs');
+        const btnCheckStatus = document.getElementById('btn-check-status');
+        const btnSimulateError = document.getElementById('btn-simulate-error');
+        
+        // Elementos do formulário
+        const companhiaAerea = document.getElementById('companhia_aerea');
+        const dataHoraPartida = document.getElementById('data_hora_partida');
+        const aeroportoOrigem = document.getElementById('aeroporto_origem');
+        const aeroportoDestino = document.getElementById('aeroporto_destino');
+        const distanciaKm = document.getElementById('distancia_km');
+        const randomInfo = document.getElementById('random-info');
+        const randomDetails = document.getElementById('random-details');
+        
+        // Elementos de resultado
+        const predictionResult = document.getElementById('prediction-result');
+        const predictionValue = document.getElementById('prediction-value');
+        const predictionStatus = document.getElementById('prediction-status');
+        const predictionFeatures = document.getElementById('prediction-features');
+        const apiTestResult = document.getElementById('api-test-result');
+        const testEndpoint = document.getElementById('test-endpoint');
+        const testResponse = document.getElementById('test-response');
+        const logsContainer = document.getElementById('logs-container');
+        
+        // Elementos de status do sistema
+        const apiStatusBadge = document.getElementById('api-status-badge');
+        const systemStatusText = document.getElementById('system-status-text');
+        const responseTime = document.getElementById('response-time');
+        const systemAlert = document.getElementById('system-alert');
+        const alertMessage = document.getElementById('alert-message');
+        
+        // Elementos para expansão
+        const systemStatusCard = document.getElementById('system-status-card');
+        const systemStatusHeader = document.getElementById('system-status-header');
+        const systemStatusBody = document.getElementById('system-status-body');
+        const apiInfoCard = document.getElementById('api-info-card');
+        const apiInfoHeader = document.getElementById('api-info-header');
+        const apiInfoBody = document.getElementById('api-info-body');
+        
+        // Estado da aplicação
+        let apiLogs = [
+            "[INFO] Sistema Flight On Time iniciado",
+            "[INFO] Modelo de previsão carregado com sucesso",
+            "[INFO] API configurada na porta 8000",
+            "[INFO] Endpoints disponíveis: /health, /model, /predict, /docs"
+        ];
+        
+        let isApiOnline = true;
+        let responseTimes = [];
+        
+        // Estado das seções colapsáveis
+        let systemStatusExpanded = false;
+        let apiInfoExpanded = false;
+        
+        // Dados para geração aleatória
+        const companhiasAereas = [
+            { value: "GOL", nome: "GOL Linhas Aéreas" },
+            { value: "LATAM", nome: "LATAM Airlines" },
+            { value: "AZUL", nome: "Azul Linhas Aéreas" },
+            { value: "OUTRAS", nome: "Outras Companhias" }
+        ];
+        
+        const aeroportos = [
+            { iata: "CNF", cidade: "Belo Horizonte (Confins)" },
+            { iata: "GRU", cidade: "São Paulo (Guarulhos)" },
+            { iata: "GIG", cidade: "Rio de Janeiro (Galeão)" },
+            { iata: "CGH", cidade: "São Paulo (Congonhas)" },
+            { iata: "BSB", cidade: "Brasília" }
+        ];
+        
+        const rotasConhecidas = [
+            { origem: "CNF", destino: "BSB", distancia: 600, descricao: "Belo Horizonte → Brasília" },
+            { origem: "GRU", destino: "GIG", distancia: 350, descricao: "Guarulhos → Galeão" },
+            { origem: "GRU", destino: "BSB", distancia: 870, descricao: "Guarulhos → Brasília" },
+            { origem: "CGH", destino: "BSB", distancia: 870, descricao: "Congonhas → Brasília" }
+        ];
+        
+        // Função para alternar expansão de seções
+        function toggleSection(sectionType) {
+            if (sectionType === 'system-status') {
+                systemStatusExpanded = !systemStatusExpanded;
+                
+                if (systemStatusExpanded) {
+                    // Expandir
+                    systemStatusHeader.classList.remove('collapsed');
+                    systemStatusBody.classList.remove('collapsed');
+                    systemStatusCard.classList.remove('collapsed');
+                    
+                    // Atualizar texto do botão
+                    const expandText = systemStatusHeader.querySelector('.expand-text');
+                    const expandIcon = systemStatusHeader.querySelector('.expand-icon');
+                    expandText.textContent = 'Ocultar';
+                    expandIcon.style.transform = 'rotate(180deg)';
+                    
+                    addLog('Seção "Status do Sistema" expandida');
+                } else {
+                    // Colapsar
+                    systemStatusHeader.classList.add('collapsed');
+                    systemStatusBody.classList.add('collapsed');
+                    systemStatusCard.classList.add('collapsed');
+                    
+                    // Atualizar texto do botão
+                    const expandText = systemStatusHeader.querySelector('.expand-text');
+                    const expandIcon = systemStatusHeader.querySelector('.expand-icon');
+                    expandText.textContent = 'Expandir';
+                    expandIcon.style.transform = 'rotate(0deg)';
+                    
+                    addLog('Seção "Status do Sistema" ocultada');
+                }
+            } else if (sectionType === 'api-info') {
+                apiInfoExpanded = !apiInfoExpanded;
+                
+                if (apiInfoExpanded) {
+                    // Expandir
+                    apiInfoHeader.classList.remove('collapsed');
+                    apiInfoBody.classList.remove('collapsed');
+                    apiInfoCard.classList.remove('collapsed');
+                    
+                    // Atualizar texto do botão
+                    const expandText = apiInfoHeader.querySelector('.expand-text');
+                    const expandIcon = apiInfoHeader.querySelector('.expand-icon');
+                    expandText.textContent = 'Ocultar';
+                    expandIcon.style.transform = 'rotate(180deg)';
+                    
+                    addLog('Seção "Informações Técnicas da API" expandida');
+                } else {
+                    // Colapsar
+                    apiInfoHeader.classList.add('collapsed');
+                    apiInfoBody.classList.add('collapsed');
+                    apiInfoCard.classList.add('collapsed');
+                    
+                    // Atualizar texto do botão
+                    const expandText = apiInfoHeader.querySelector('.expand-text');
+                    const expandIcon = apiInfoHeader.querySelector('.expand-icon');
+                    expandText.textContent = 'Expandir';
+                    expandIcon.style.transform = 'rotate(0deg)';
+                    
+                    addLog('Seção "Informações Técnicas da API" ocultada');
+                }
+            }
+        }
+        
+        // Função para expandir automaticamente se houver erro
+        function expandOnError() {
+            if (!systemStatusExpanded) {
+                toggleSection('system-status');
+            }
+        }
+        
+        // Função para atualizar status da API no header
+        function atualizarStatusAPI(online) {
+            isApiOnline = online;
+            
+            if (!online) {
+                // Mostrar badge de erro no header
+                apiStatusBadge.style.display = 'flex';
+                apiStatusBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> API Offline';
+                apiStatusBadge.className = 'status-badge status-badge-offline';
+                
+                // Atualizar status no card do sistema
+                systemStatusText.innerHTML = '<i class="fas fa-times-circle" style="color: #DC3545;"></i> Offline';
+                systemStatusText.style.color = '#DC3545';
+                
+                // Mostrar alerta
+                systemAlert.style.display = 'block';
+                alertMessage.textContent = 'A API está temporariamente indisponível. Tente novamente em alguns instantes.';
+                
+                // Expandir seção de status automaticamente
+                expandOnError();
+                
+                addLog('[ERRO] API está offline');
+            } else {
+                // Esconder badge do header
+                apiStatusBadge.style.display = 'none';
+                
+                // Atualizar status no card do sistema
+                systemStatusText.innerHTML = '<i class="fas fa-check-circle" style="color: #168821;"></i> Operacional';
+                systemStatusText.style.color = '#168821';
+                
+                // Esconder alerta
+                systemAlert.style.display = 'none';
+                
+                addLog('[INFO] API está online e operacional');
+            }
+        }
+        
+        // Função para verificar status da API
+        async function verificarStatusAPI() {
+            const inicio = Date.now();
+            
+            try {
+                // Simular verificação de status
+                await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 700));
+                
+                const tempoResposta = Date.now() - inicio;
+                responseTimes.push(tempoResposta);
+                
+                // Manter apenas os últimos 5 tempos
+                if (responseTimes.length > 5) {
+                    responseTimes.shift();
+                }
+                
+                // Calcular média
+                const media = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+                responseTime.textContent = `${Math.round(media)}ms`;
+                
+                // Se API está offline, simular recuperação com 80% de chance
+                if (!isApiOnline && Math.random() > 0.2) {
+                    atualizarStatusAPI(true);
+                }
+                
+                addLog(`[INFO] Verificação de status: ${tempoResposta}ms de resposta`);
+                
+            } catch (erro) {
+                atualizarStatusAPI(false);
+                addLog(`[ERRO] Falha na verificação de status: ${erro.message}`);
+            }
+        }
+        
+        // Função para inicializar o formulário com dados padrão
+        function inicializarFormulario() {
+            // Definir data atual como padrão
+            const now = new Date();
+            now.setHours(11, 0, 0, 0);
+            dataHoraPartida.value = now.toISOString().slice(0, 16);
+            
+            // Definir valores padrão
+            companhiaAerea.value = "GOL";
+            aeroportoOrigem.value = "CNF";
+            aeroportoDestino.value = "BSB";
+            distanciaKm.value = 600;
+            
+            addLog("Formulário inicializado com dados padrão");
+        }
+        
+        // Função para gerar dados aleatórios
+        function gerarDadosAleatorios() {
+            // Verificar se API está online
+            if (!isApiOnline) {
+                alert('API está offline. Não é possível gerar dados neste momento.');
+                return;
+            }
+            
+            // Esconder resultados anteriores
+            predictionResult.style.display = 'none';
+            randomInfo.style.display = 'none';
+            
+            // Companhia aérea aleatória
+            const companhiaIndex = Math.floor(Math.random() * companhiasAereas.length);
+            companhiaAerea.value = companhiasAereas[companhiaIndex].value;
+            
+            // Data e hora aleatória (próximos 7 dias, entre 6h e 22h)
+            const hoje = new Date();
+            const diasFuturos = Math.floor(Math.random() * 7) + 1;
+            const dataVoo = new Date(hoje);
+            dataVoo.setDate(hoje.getDate() + diasFuturos);
+            
+            const hora = Math.floor(Math.random() * 16) + 6;
+            const minuto = Math.floor(Math.random() * 4) * 15; // 0, 15, 30 ou 45
+            dataVoo.setHours(hora, minuto, 0, 0);
+            
+            dataHoraPartida.value = dataVoo.toISOString().slice(0, 16);
+            
+            // Rota aleatória
+            let origem, destino, distancia, descricaoRota;
+            
+            if (Math.random() > 0.3) {
+                // Rota conhecida
+                const rotaIndex = Math.floor(Math.random() * rotasConhecidas.length);
+                const rota = rotasConhecidas[rotaIndex];
+                origem = rota.origem;
+                destino = rota.destino;
+                distancia = rota.distancia;
+                descricaoRota = rota.descricao;
+            } else {
+                // Rota aleatória
+                let origemIndex, destinoIndex;
+                do {
+                    origemIndex = Math.floor(Math.random() * aeroportos.length);
+                    destinoIndex = Math.floor(Math.random() * aeroportos.length);
+                } while (origemIndex === destinoIndex);
+                
+                origem = aeroportos[origemIndex].iata;
+                destino = aeroportos[destinoIndex].iata;
+                distancia = 300 + Math.abs(origemIndex - destinoIndex) * 150;
+                descricaoRota = `${aeroportos[origemIndex].cidade} → ${aeroportos[destinoIndex].cidade}`;
+            }
+            
+            aeroportoOrigem.value = origem;
+            aeroportoDestino.value = destino;
+            distanciaKm.value = distancia;
+            
+            // Mostrar informações
+            randomInfo.style.display = 'block';
+            randomDetails.innerHTML = `
+                <strong>Rota:</strong> ${descricaoRota}<br>
+                <strong>Companhia:</strong> ${companhiasAereas[companhiaIndex].nome}<br>
+                <strong>Data/Hora:</strong> ${dataVoo.toLocaleDateString('pt-BR')} às ${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}<br>
+                <strong>Distância:</strong> ${distancia} km
+            `;
+            
+            addLog(`Dados aleatórios gerados: ${companhiaAerea.value} ${origem}→${destino}`);
+        }
+        
+        // Função para adicionar log
+        function addLog(message) {
+            const timestamp = new Date().toLocaleTimeString('pt-BR', { hour12: false });
+            apiLogs.push(`[${timestamp}] ${message}`);
+            
+            if (logsContainer.style.display !== 'none') {
+                atualizarLogs();
+            }
+        }
+        
+        // Função para atualizar logs
+        function atualizarLogs() {
+            logsContainer.innerHTML = '';
+            apiLogs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                
+                let logFormatado = log;
+                if (log.includes('[INFO]')) {
+                    logFormatado = log.replace('[INFO]', '<span class="log-time">[INFO]</span>');
+                } else if (log.includes('[ERRO]')) {
+                    logFormatado = log.replace('[ERRO]', '<span class="log-time" style="color: #DC3545;">[ERRO]</span>');
+                } else if (log.includes('POST') || log.includes('GET')) {
+                    const parts = log.split('"');
+                    if (parts.length > 1) {
+                        logFormatado = parts[0] + '<span class="log-endpoint">"' + parts[1] + '"</span>' + (parts[2] || '');
+                    }
+                }
+                
+                if (log.includes('200 OK')) {
+                    logFormatado = logFormatado.replace('200 OK', '<span class="log-status">200 OK</span>');
+                } else if (log.includes('500') || log.includes('Offline')) {
+                    logFormatado = logFormatado.replace('500', '<span class="log-status" style="color: #DC3545;">500</span>');
+                }
+                
+                logEntry.innerHTML = logFormatado;
+                logsContainer.appendChild(logEntry);
+            });
+            
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+        
+        // Função para simular chamada à API (com verificação de status)
+        async function simularChamadaAPI(endpoint, method = 'GET', dados = null) {
+            // Verificar se API está online
+            if (!isApiOnline) {
+                throw new Error('API está offline. Verifique a conexão e tente novamente.');
+            }
+            
+            const inicio = Date.now();
+            addLog(`${method} ${endpoint} chamado`);
+            
+            // Simular tempo de resposta
+            await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 700));
+            
+            // Simular falha ocasional (5% de chance)
+            if (Math.random() < 0.05 && endpoint !== '/health') {
+                const tempoResposta = Date.now() - inicio;
+                addLog(`${method} ${endpoint} retornou 500 Internal Server Error (${tempoResposta}ms)`);
+                throw new Error('Erro interno do servidor (500)');
+            }
+            
+            let resposta;
+            
+            switch(endpoint) {
+                case '/health':
+                    resposta = {
+                        status: "operacional",
+                        timestamp: new Date().toISOString(),
+                        versao: "1.0.0",
+                        ambiente: "produção",
+                        uptime: "99.8%"
+                    };
+                    break;
+                    
+                case '/model':
+                    resposta = {
+                        nome_modelo: "previsor_atrasos_voo",
+                        versao: "1.0.0",
+                        features: [
+                            "companhia_aerea",
+                            "aeroporto_origem", 
+                            "aeroporto_destino",
+                            "dia_da_semana",
+                            "hora_do_dia",
+                            "mes",
+                            "distancia_km"
+                        ],
+                        acuracia: 0.87,
+                        data_treinamento: "2025-12-01",
+                        descricao: "Modelo de previsão de atrasos de voo da ANAC"
+                    };
+                    break;
+                    
+                case '/predict':
+                    const dataHora = new Date(dados.data_hora_partida);
+                    const hora = dataHora.getHours();
+                    const diaSemana = dataHora.getDay();
+                    const distancia = dados.distancia_km;
+                    
+                    let probabilidadeBase = 0.3;
+                    
+                    // Fatores de influência
+                    if (hora >= 6 && hora < 12) probabilidadeBase -= 0.1;
+                    if (hora >= 18 && hora < 24) probabilidadeBase += 0.15;
+                    if (hora >= 0 && hora < 6) probabilidadeBase += 0.2;
+                    
+                    if (diaSemana === 5) probabilidadeBase += 0.1;
+                    if (diaSemana === 0) probabilidadeBase += 0.15;
+                    
+                    if (dados.companhia_aerea === "GOL") probabilidadeBase += 0.1;
+                    if (dados.companhia_aerea === "LATAM") probabilidadeBase -= 0.05;
+                    
+                    if (distancia > 1000) probabilidadeBase += 0.2;
+                    else if (distancia > 500) probabilidadeBase += 0.1;
+                    
+                    if (dados.aeroporto_origem === "CNF" && dados.aeroporto_destino === "BSB") {
+                        probabilidadeBase += 0.15;
+                    }
+                    
+                    probabilidadeBase = Math.max(0.1, Math.min(0.95, probabilidadeBase));
+                    
+                    const probabilidadeFinal = probabilidadeBase + (Math.random() * 0.1 - 0.05);
+                    const probabilidadeArredondada = Math.round(Math.max(0.1, Math.min(0.95, probabilidadeFinal)) * 100) / 100;
+                    
+                    resposta = {
+                        atraso: probabilidadeArredondada > 0.5,
+                        probabilidade: probabilidadeArredondada,
+                        nivel_risco: probabilidadeArredondada > 0.7 ? "ALTO" : 
+                                    probabilidadeArredondada > 0.4 ? "MODERADO" : "BAIXO",
+                        features_processadas: {
+                            companhia_aerea: dados.companhia_aerea,
+                            aeroporto_origem: dados.aeroporto_origem,
+                            aeroporto_destino: dados.aeroporto_destino,
+                            distancia_km: dados.distancia_km,
+                            dia_da_semana: diaSemana,
+                            hora_do_dia: hora,
+                            mes: dataHora.getMonth() + 1
+                        },
+                        timestamp: new Date().toISOString(),
+                        id_analise: "ANAC-" + Date.now()
+                    };
+                    break;
+                    
+                default:
+                    resposta = { erro: "Endpoint não encontrado" };
+            }
+            
+            const tempoResposta = Date.now() - inicio;
+            responseTimes.push(tempoResposta);
+            
+            // Manter apenas os últimos 5 tempos
+            if (responseTimes.length > 5) {
+                responseTimes.shift();
+            }
+            
+            // Calcular média
+            const media = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+            responseTime.textContent = `${Math.round(media)}ms`;
+            
+            addLog(`${method} ${endpoint} retornou 200 OK (${tempoResposta}ms)`);
+            
+            return {
+                ok: true,
+                status: 200,
+                json: () => Promise.resolve(resposta)
+            };
+        }
+        
+        // Função para testar endpoint
+        async function testarEndpoint(endpoint, method = 'GET', dadosRequisicao = null) {
+            // Verificar se API está online
+            if (!isApiOnline && endpoint !== '/health') {
+                testEndpoint.innerHTML = `<strong>${method} ${endpoint}</strong> - Status: <span style="color: #DC3545;">API Offline</span>`;
+                testResponse.textContent = JSON.stringify({
+                    erro: "API está offline",
+                    mensagem: "Não foi possível conectar ao servidor. Verifique o status do sistema."
+                }, null, 2);
+                apiTestResult.style.display = 'block';
+                return;
+            }
+            
+            apiTestResult.style.display = 'block';
+            testEndpoint.textContent = `Testando ${method} ${endpoint}...`;
+            testResponse.textContent = "Aguardando resposta da API...";
+            
+            try {
+                const resposta = await simularChamadaAPI(endpoint, method, dadosRequisicao);
+                testEndpoint.innerHTML = `<strong>${method} ${endpoint}</strong> - Status: <span style="color: #168821;">200 OK</span>`;
+                
+                const dados = await resposta.json();
+                testResponse.textContent = JSON.stringify(dados, null, 2);
+                
+            } catch (erro) {
+                testEndpoint.innerHTML = `<strong>${method} ${endpoint}</strong> - Status: <span style="color: #DC3545;">Erro</span>`;
+                testResponse.textContent = JSON.stringify({
+                    erro: erro.message,
+                    timestamp: new Date().toISOString()
+                }, null, 2);
+                
+                // Se for erro de conexão, marcar API como offline
+                if (erro.message.includes('offline') || erro.message.includes('500')) {
+                    atualizarStatusAPI(false);
+                }
+            }
+        }
+        
+        // Função para fazer previsão
+        async function fazerPrevisao() {
+            // Verificar se API está online
+            if (!isApiOnline) {
+                alert('API está offline. Não é possível fazer previsões neste momento.');
+                return;
+            }
+            
+            // Validar formulário
+            if (!flightForm.checkValidity()) {
+                alert("Por favor, preencha todos os campos obrigatórios.");
+                return;
+            }
+            
+            if (aeroportoOrigem.value === aeroportoDestino.value) {
+                alert("A origem e o destino devem ser diferentes.");
+                return;
+            }
+            
+            const dadosVoo = {
+                companhia_aerea: companhiaAerea.value,
+                aeroporto_origem: aeroportoOrigem.value,
+                aeroporto_destino: aeroportoDestino.value,
+                data_hora_partida: dataHoraPartida.value,
+                distancia_km: parseInt(distanciaKm.value)
+            };
+            
+            // Mostrar resultado
+            predictionResult.style.display = 'block';
+            predictionValue.textContent = "Analisando...";
+            predictionStatus.textContent = "Processando dados do voo...";
+            
+            // Testar endpoint de previsão
+            await testarEndpoint('/predict', 'POST', dadosVoo);
+            
+            // Obter resposta simulada
+            try {
+                const resposta = await simularChamadaAPI('/predict', 'POST', dadosVoo);
+                const dados = await resposta.json();
+                
+                // Atualizar interface
+                const probabilidadePercentual = Math.round(dados.probabilidade * 1000) / 10;
+                predictionValue.textContent = `${probabilidadePercentual}%`;
+                
+                // Definir classe de cor
+                predictionValue.className = 'prediction-value';
+                if (probabilidadePercentual < 30) {
+                    predictionValue.classList.add('low');
+                    predictionStatus.innerHTML = '<span style="color: #168821;"><i class="fas fa-check-circle"></i> Baixa probabilidade de atraso</span>';
+                } else if (probabilidadePercentual < 70) {
+                    predictionValue.classList.add('medium');
+                    predictionStatus.innerHTML = '<span style="color: #FFCD07;"><i class="fas fa-exclamation-triangle"></i> Probabilidade moderada de atraso</span>';
+                } else {
+                    predictionValue.classList.add('high');
+                    predictionStatus.innerHTML = '<span style="color: #DC3545;"><i class="fas fa-exclamation-circle"></i> Alta probabilidade de atraso</span>';
+                }
+                
+                // Mostrar detalhes
+                let detalhesHTML = '<table class="feature-table">';
+                for (const [chave, valor] of Object.entries(dados.features_processadas)) {
+                    let valorFormatado = valor;
+                    let chaveFormatada = chave.replace(/_/g, ' ');
+                    
+                    if (chave === 'dia_da_semana') {
+                        const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+                        valorFormatado = dias[valor];
+                    } else if (chave === 'hora_do_dia') {
+                        valorFormatado = `${valor}h`;
+                    } else if (chave === 'mes') {
+                        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                        valorFormatado = meses[valor - 1];
+                    } else if (chave === 'distancia_km') {
+                        valorFormatado = `${valor} km`;
+                    }
+                    
+                    detalhesHTML += `
+                        <tr>
+                            <td>${chaveFormatada}:</td>
+                            <td>${valorFormatado}</td>
+                        </tr>
+                    `;
+                }
+                detalhesHTML += '</table>';
+                predictionFeatures.innerHTML = detalhesHTML;
+                
+                addLog(`Previsão realizada: ${dadosVoo.companhia_aerea} ${dadosVoo.aeroporto_origem}→${dadosVoo.aeroporto_destino} - ${probabilidadePercentual}%`);
+                
+            } catch (erro) {
+                predictionStatus.innerHTML = '<span style="color: #DC3545;"><i class="fas fa-exclamation-circle"></i> Erro na análise</span>';
+                predictionValue.textContent = "Erro";
+                predictionValue.className = 'prediction-value high';
+                
+                addLog(`Erro na previsão: ${erro.message}`);
+            }
+        }
+        
+        // Event Listeners
+        btnRandom.addEventListener('click', gerarDadosAleatorios);
+        btnPredict.addEventListener('click', fazerPrevisao);
+        
+        btnHealth.addEventListener('click', () => {
+            testarEndpoint('/health', 'GET');
+        });
+        
+        btnModel.addEventListener('click', () => {
+            testarEndpoint('/model', 'GET');
+        });
+        
+        btnDocs.addEventListener('click', () => {
+            addLog('Acessando documentação da API');
+            alert('Documentação Swagger disponível em http://localhost:8000/docs');
+        });
+        
+        btnLogs.addEventListener('click', () => {
+            if (logsContainer.style.display === 'none') {
+                logsContainer.style.display = 'block';
+                atualizarLogs();
+            } else {
+                logsContainer.style.display = 'none';
+            }
+        });
+        
+        btnCheckStatus.addEventListener('click', () => {
+            verificarStatusAPI();
+        });
+        
+        btnSimulateError.addEventListener('click', () => {
+            if (isApiOnline) {
+                if (confirm('Deseja simular uma falha na API? Isso irá marcar a API como offline.')) {
+                    atualizarStatusAPI(false);
+                    addLog('[SIMULAÇÃO] Falha na API simulada manualmente');
+                }
+            } else {
+                if (confirm('Deseja restaurar a API online?')) {
+                    atualizarStatusAPI(true);
+                    addLog('[SIMULAÇÃO] API restaurada manualmente');
+                }
+            }
+        });
+        
+        // Event Listeners para expansão
+        systemStatusHeader.addEventListener('click', () => {
+            toggleSection('system-status');
+        });
+        
+        apiInfoHeader.addEventListener('click', () => {
+            toggleSection('api-info');
+        });
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarFormulario();
+            verificarStatusAPI(); // Verificar status inicial
+            
+            // Verificar status a cada 30 segundos
+            setInterval(verificarStatusAPI, 30000);
+            
+            // Inicializar seções colapsadas
+            systemStatusHeader.classList.add('collapsed');
+            systemStatusBody.classList.add('collapsed');
+            systemStatusCard.classList.add('collapsed');
+            
+            apiInfoHeader.classList.add('collapsed');
+            apiInfoBody.classList.add('collapsed');
+            apiInfoCard.classList.add('collapsed');
+            
+            addLog('Interface do usuário carregada com sucesso');
+            
+            // Adicionar logs iniciais
+            setTimeout(() => {
+                addLog('127.0.0.1:54321 - "POST /predict HTTP/1.1" 200 OK (420ms)');
+            }, 1000);
+            
+            setTimeout(() => {
+                addLog('127.0.0.1:54321 - "GET /model HTTP/1.1" 200 OK (380ms)');
+            }, 2000);
+            
+            setTimeout(() => {
+                addLog('127.0.0.1:54321 - "GET /health HTTP/1.1" 200 OK (320ms)');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

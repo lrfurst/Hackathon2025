@@ -1,0 +1,99 @@
+# datascience/4_integration/config/cors_config.json
+{
+  "cors_configuration": {
+    "description": "Configuração CORS para integração Java-Python",
+    "last_updated": "2024-01-15",
+    "environment": "development",
+    
+    "allowed_origins": [
+      "http://localhost:8080",
+      "http://localhost:3000",
+      "http://127.0.0.1:8080",
+      "http://127.0.0.1:3000"
+    ],
+    
+    "production_origins": [
+      "https://backend-java.producao.com",
+      "https://frontend.producao.com",
+      "https://api.producao.com"
+    ],
+    
+    "allowed_methods": [
+      "GET",
+      "POST",
+      "OPTIONS"
+    ],
+    
+    "allowed_headers": [
+      "Content-Type",
+      "Accept",
+      "Authorization",
+      "X-Requested-With",
+      "Origin",
+      "X-API-Key"
+    ],
+    
+    "exposed_headers": [
+      "Content-Length",
+      "X-Response-Time",
+      "X-API-Version",
+      "X-Rate-Limit-Limit",
+      "X-Rate-Limit-Remaining",
+      "X-Rate-Limit-Reset"
+    ],
+    
+    "allow_credentials": true,
+    "max_age": 3600,
+    
+    "health_check_endpoints": [
+      "/health",
+      "/metrics",
+      "/docs",
+      "/redoc"
+    ],
+    
+    "no_cors_endpoints": [
+      "/health",
+      "/metrics"
+    ],
+    
+    "security_notes": [
+      "Em produção, NÃO usar '*' em allowed_origins",
+      "Limitar allowed_origins apenas aos domínios necessários",
+      "Habilitar HTTPS obrigatório em produção",
+      "Monitorar tentativas de acesso CORS inválidas"
+    ],
+    
+    "testing_instructions": {
+      "test_cors_locally": "curl -X OPTIONS http://localhost:8000/predict -H 'Origin: http://localhost:8080' -H 'Access-Control-Request-Method: POST' -v",
+      "verify_headers": "Verifique se retorna: Access-Control-Allow-Origin: http://localhost:8080",
+      "test_invalid_origin": "curl -X OPTIONS http://localhost:8000/predict -H 'Origin: http://evil.com' -v"
+    },
+    
+    "implementation_code": {
+      "fastapi_example": {
+        "python": "from fastapi.middleware.cors import CORSMiddleware\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=config['allowed_origins'],\n    allow_credentials=True,\n    allow_methods=['GET', 'POST', 'OPTIONS'],\n    allow_headers=['*']\n)"
+      },
+      "spring_boot_example": {
+        "java": "@Configuration\npublic class WebConfig implements WebMvcConfigurer {\n    @Override\n    public void addCorsMappings(CorsRegistry registry) {\n        registry.addMapping(\"/api/**\")\n            .allowedOrigins(\"http://localhost:8000\")\n            .allowedMethods(\"GET\", \"POST\", \"PUT\", \"DELETE\", \"OPTIONS\")\n            .allowedHeaders(\"*\");\n    }\n}"
+      }
+    },
+    
+    "troubleshooting": {
+      "common_issues": [
+        {
+          "issue": "Erro CORS no navegador",
+          "solution": "Verificar se o Origin da requisição está na lista allowed_origins"
+        },
+        {
+          "issue": "OPTIONS request retorna 404",
+          "solution": "Garantir que o servidor trata métodos OPTIONS"
+        },
+        {
+          "issue": "Credentials não são enviados",
+          "solution": "Configurar allow_credentials: true e withCredentials: true no cliente"
+        }
+      ]
+    }
+  }
+}

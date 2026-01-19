@@ -1,0 +1,39 @@
+# Arquivos de log e debug
+*.log
+debug.log
+pytest.log
+
+# Relatórios de teste
+reports/
+*.html
+*.xml
+coverage.xml
+.coverage
+
+# Cache do pytest
+.pytest_cache/
+__pycache__/
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Screenshots (se aplicável)
+screenshots/
+
+# Dados de teste temporários
+test_data/
+temp/
+
+# Configurações locais
+.env
+.env.local
+local_config.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

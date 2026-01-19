@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  ml-api:
+    build: ./ml-api
+    container_name: flight-ml-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - flight-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  backend:
+    build: ./backend
+    container_name: flight-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - ML_API_URL=http://ml-api:8000
+    depends_on:
+      ml-api:
+        condition: service_healthy
+    networks:
+      - flight-network
+
+networks:
+  flight-network:
+    driver: bridge

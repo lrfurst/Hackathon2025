@@ -1,0 +1,16 @@
+{
+  "optimal_threshold": 0.05,
+  "validation_recall": 1.0,
+  "validation_precision": 0.1955,
+  "validation_f1": 0.32705980761187786,
+  "business_requirement_met": true,
+  "model_config": {
+    "C": 0.01,
+    "class_weight": {
+      "0": 1,
+      "1": 12
+    },
+    "random_state": 42,
+    "solver": "lbfgs"
+  }
+}

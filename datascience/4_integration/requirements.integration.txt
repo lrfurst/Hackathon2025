@@ -1,0 +1,57 @@
+# requirements.integration.txt - VERSÃO SIMPLIFICADA
+
+# ============================================================================
+# 🎯 DEPENDÊNCIAS ESSENCIAIS PARA INTEGRAÇÃO
+# ============================================================================
+
+# API e Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Cliente HTTP para testes
+requests==2.31.0
+
+# Testes
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Validação
+jsonschema==4.19.2
+python-dateutil==2.8.2
+
+# Logging e debugging
+loguru==0.7.2
+rich==13.7.0
+
+# ============================================================================
+# 🔧 FERRAMENTAS ADICIONAIS (opcionais)
+# ============================================================================
+
+# Monitoramento
+prometheus-client==0.19.0
+
+# Cache
+redis==5.0.1
+
+# CLI
+click==8.1.7
+
+# ============================================================================
+# 📊 DEPENDÊNCIAS DO MODELO (AJUSTE COM AS SUAS)
+# ============================================================================
+
+# Modelo ML (substitua com suas dependências reais)
+scikit-learn==1.3.2
+pandas==2.1.3
+numpy==1.24.3
+joblib==1.3.2
+
+# ============================================================================
+# 📝 NOTAS DE INSTALAÇÃO
+# ============================================================================
+
+# Instalação básica:
+# pip install -r requirements.integration.txt
+
+# Python requerido: >=3.8

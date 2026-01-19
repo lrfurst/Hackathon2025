@@ -1,0 +1,144 @@
+# Response Examples (Contrato Real)
+
+> Documento **técnico e defensivo**. Tudo aqui é **o que o cliente Java pode assumir**.  
+> O que não está aqui **não faz parte do contrato**.
+
+---
+
+## Princípios
+
+- ❌ Nenhuma promessa de SLA, P95, acurácia ou impacto financeiro
+- ❌ Nenhum campo de negócio, métrica, confiança ou custo
+- ❌ Nenhum header garantido além de `Content-Type`
+- ✅ Resposta mínima, estável e previsível
+- ✅ Erros explícitos → responsabilidade do cliente
+
+---
+
+## Resposta de Sucesso (HTTP 200)
+
+### Formato **único** aceito
+
+```json
+{
+  "prediction": {
+    "atraso": true,
+    "probabilidade": 0.0
+  }
+}
+```
+
+### Regras
+
+- `atraso`: boolean
+- `probabilidade`: número entre **0.0 e 1.0**
+- Nenhum outro campo é garantido
+
+### Exemplos válidos
+
+#### Atraso provável
+```json
+{
+  "prediction": {
+    "atraso": true,
+    "probabilidade": 0.87
+  }
+}
+```
+
+#### Sem atraso provável
+```json
+{
+  "prediction": {
+    "atraso": false,
+    "probabilidade": 0.32
+  }
+}
+```
+
+---
+
+## Respostas de Erro
+
+### 422 — Erro de validação
+
+Formato **compatível com FastAPI / Pydantic**.
+
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "data_hora_partida"],
+      "msg": "Formato de data inválido",
+      "type": "value_error"
+    }
+  ]
+}
+```
+
+📌 **Ação do cliente**: corrigir payload. **Não retentar automaticamente**.
+
+---
+
+### 400 — JSON malformado
+
+```json
+{
+  "detail": "JSON inválido"
+}
+```
+
+📌 **Ação do cliente**: corrigir serialização.
+
+---
+
+### 5xx — Erro interno
+
+```json
+{
+  "detail": "Erro interno"
+}
+```
+
+📌 **Ação do cliente**:
+- Retry com backoff **permitido**
+- Fallback **permitido**
+
+---
+
+## O que foi removido (intencionalmente)
+
+- `status`, `metadata`, `business_metrics`
+- `model_version`, `processing_time_ms`, `request_id`, `trace_id`
+- `/health`, `/metrics`
+- Rate limit, retry-after, headers customizados
+- Qualquer interpretação de negócio
+
+> Esses elementos **não são contrato de integração**.
+
+---
+
+## Guia mínimo para Java
+
+### Regras de ouro
+
+- Timeout Java ≥ **3000ms**
+- 4xx → erro de payload (não retry)
+- 5xx / timeout → retry + fallback
+- Nunca inferir nada além de `prediction`
+
+### Exemplo defensivo
+
+```java
+if (response != null && response.getPrediction() != null) {
+    boolean atraso = response.getPrediction().isAtraso();
+    double prob = response.getPrediction().getProbabilidade();
+}
+```
+
+---
+
+## Regra final
+
+> Se a API mudar, **este arquivo muda junto**.  
+> Se não estiver documentado aqui, **o Java não deve usar**.

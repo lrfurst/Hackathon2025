@@ -1,0 +1,3 @@
+# Script de Treinamento Scikit-Learn
+import joblib
+# train_logic...

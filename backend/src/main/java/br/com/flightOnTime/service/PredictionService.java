@@ -17,8 +17,6 @@ public class PredictionService {
     @Value("${ml.api.base-url}")
     private String baseUrl;
 
-    @Value("${ml.api.predict-path}")
-    private String predictPath;
 
     public PredictionService(WebClient.Builder builder) {
         this.webClient = builder.build();
@@ -28,7 +26,7 @@ public class PredictionService {
     public PredictionResponseDTO getPrediction(PredictionRequestDTO request) {
 
         return webClient.post()
-                .uri(baseUrl + predictPath)
+                .uri(baseUrl)
                 .bodyValue(request)
                 .retrieve()
                 .onStatus(

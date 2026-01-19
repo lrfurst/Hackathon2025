@@ -1,0 +1,179 @@
+# payload_examples.json
+
+## Objetivo
+Este arquivo contém **exemplos de payloads válidos, inválidos e casos de borda** para a API Python de previsão de atrasos.
+
+Ele existe **exclusivamente** para:
+- Testes de integração
+- Validação de contrato (Java ↔ Python)
+- Diagnóstico rápido de erros 4xx
+
+> ⚠️ Este documento **não descreve comportamento do modelo**, métricas de negócio ou valores esperados de previsão.
+
+---
+
+## Informações da API
+
+- **Base URL**: `http://localhost:8000`
+- **Endpoint**: `POST /predict`
+- **Formato**: `application/json`
+- **Timeout da API**: ~2000ms
+- **Timeout recomendado no Java**: 3000ms
+
+---
+
+## Regras Gerais do Payload
+
+- `companhia_aerea`: 2–3 letras maiúsculas (IATA)
+- `aeroporto_origem`: 3 letras maiúsculas (IATA)
+- `aeroporto_destino`: 3 letras maiúsculas (IATA)
+- `data_hora_partida`: ISO 8601 (`YYYY-MM-DDTHH:MM:SS`)
+- `distancia_km`: número positivo (> 0)
+
+---
+
+## Exemplos VÁLIDOS
+
+### Exemplo 1 — Doméstico EUA
+```json
+{
+  "companhia_aerea": "AA",
+  "aeroporto_origem": "JFK",
+  "aeroporto_destino": "LAX",
+  "data_hora_partida": "2024-01-15T14:30:00",
+  "distancia_km": 3980.0
+}
+```
+
+### Exemplo 2 — Doméstico Brasil
+```json
+{
+  "companhia_aerea": "G3",
+  "aeroporto_origem": "GRU",
+  "aeroporto_destino": "GIG",
+  "data_hora_partida": "2024-01-17T18:45:00",
+  "distancia_km": 350.0
+}
+```
+
+### Exemplo 3 — Internacional Longa Distância
+```json
+{
+  "companhia_aerea": "LH",
+  "aeroporto_origem": "FRA",
+  "aeroporto_destino": "JFK",
+  "data_hora_partida": "2024-01-18T22:15:00",
+  "distancia_km": 6205.0
+}
+```
+
+---
+
+## Exemplos INVÁLIDOS (esperado HTTP 4xx)
+
+### Campos obrigatórios faltando
+```json
+{
+  "companhia_aerea": "AA",
+  "aeroporto_origem": "JFK"
+}
+```
+
+### Formato de data inválido
+```json
+{
+  "companhia_aerea": "AA",
+  "aeroporto_origem": "JFK",
+  "aeroporto_destino": "LAX",
+  "data_hora_partida": "2024/01/15 14:30",
+  "distancia_km": 3980.0
+}
+```
+
+### Companhia em minúsculo
+```json
+{
+  "companhia_aerea": "aa",
+  "aeroporto_origem": "JFK",
+  "aeroporto_destino": "LAX",
+  "data_hora_partida": "2024-01-15T14:30:00",
+  "distancia_km": 3980.0
+}
+```
+
+### Distância negativa ou zero
+```json
+{
+  "companhia_aerea": "AA",
+  "aeroporto_origem": "JFK",
+  "aeroporto_destino": "LAX",
+  "data_hora_partida": "2024-01-15T14:30:00",
+  "distancia_km": 0
+}
+```
+
+### JSON malformado
+```text
+{companhia_aerea: "AA", aeroporto_origem: "JFK"
+```
+
+---
+
+## Casos de Borda (aceitação depende da API)
+
+### Distância muito alta
+```json
+{
+  "companhia_aerea": "SQ",
+  "aeroporto_origem": "SIN",
+  "aeroporto_destino": "JFK",
+  "data_hora_partida": "2024-01-25T23:45:00",
+  "distancia_km": 15350.0
+}
+```
+
+### Origem e destino iguais
+```json
+{
+  "companhia_aerea": "AA",
+  "aeroporto_origem": "JFK",
+  "aeroporto_destino": "JFK",
+  "data_hora_partida": "2024-01-30T14:30:00",
+  "distancia_km": 15.0
+}
+```
+
+---
+
+## Testes Rápidos com cURL
+
+### Payload válido
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "companhia_aerea": "AA",
+    "aeroporto_origem": "JFK",
+    "aeroporto_destino": "LAX",
+    "data_hora_partida": "2024-01-15T14:30:00",
+    "distancia_km": 3980.0
+  }'
+```
+
+### Payload inválido
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"companhia_aerea": "AA"}'
+```
+
+---
+
+## Observações Importantes
+
+- A API **não garante valores específicos de previsão**
+- Não valide `probabilidade` ou `atraso` por valor absoluto
+- Testes devem validar **schema**, **tipos** e **status HTTP**
+- Qualquer erro 5xx deve ser tratado como indisponibilidade
+
+> Se este arquivo e o README divergirem, **o README é a fonte de verdade**.
