@@ -39,17 +39,5 @@ public class PredictionController {
 
     }}
 
-    /*@GetMapping("/stats")
-    @Operation(
-            summary = "Obter estatísticas consolidadas do dia",
-            description = "Retorna o volume total de consultas, a quantidade de atrasos previstos e a taxa percentual de ocorrência para o dia atual (desde 00:00)."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Estatísticas recuperadas com sucesso"),
-            @ApiResponse(responseCode = "500", description = "Erro interno ao processar os dados do banco")
-    })
-    public ResponseEntity<StatusResponseDTO>showStatus(){
-        return ResponseEntity.ok(predictionService.getStatus());
-    }
-}*/
+    
 
