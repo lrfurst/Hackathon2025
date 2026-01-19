@@ -1,320 +1,197 @@
-# 🎬 **Roteiro: FlightOnTime - Inteligência Preditiva na Aviação**
+# 🎬 **Roteiro Atualizado: FlightOnTime - Predição de Atrasos de Voos**
 
-## 📋 **Roteiro Estruturado para Vídeo Demo**
+## 📋 **Roteiro para Vídeo Demo (5 Minutos)**
 
-### **⏰ Duração Total: 5-10 minutos**
-**Foco:** Clareza, critério técnico e valor de negócio (não edição visual)
+### **⏰ Duração Total: 5 minutos**
+**Foco:** Clareza, propósito e impacto do projeto (conforme regras do Hackathon)
 
 ---
 
 ## 📊 **Estrutura do Roteiro**
 
-### **1. 🎯 Introdução e Problema (00:00 - 01:30)**
+### **1. 🎯 Introdução e Problema (00:00 - 01:00)**
 ```markdown
 📌 Abertura:
-• Apresentação pessoal: "Olá, sou [Nome], da Equipe 22 do Hackathon ONE II"
-• Contexto: "Desenvolvemos o FlightOnTime no programa Oracle/No Country"
+• "Olá, sou Ananda Matos, da Equipe H12-25-B-Equipo 22"
+• "Apresento o Flight On Time desenvolvido no Hackathon ONE II"
 
-💸 O "Gancho" Financeiro:
-• Dado de impacto: "Atrasos de voos custam 100,76 USD por minuto para companhias aéreas"
-• Escala do problema: "Multiplique isso por milhares de voos diários..."
+💡 O Problema:
+• "15% dos voos no Brasil sofrem atrasos"
+• "Impacto operacional e financeiro para companhias aéreas"
 
-⚠️ O Problema Identificado:
-• "Efeito Dominó": 15 minutos de atraso desregulam:
-  - Tripulações
-  - Manutenções
-  - Conexões de passageiros
-  - Operações aeroportuárias
-
-👤 Persona do Usuário:
-• "Analista de Operações"
-• Trabalha com silos de dados desconexos
-• Precisa de previsões para agir proativamente
+🎯 Nossa Solução:
+• "Sistema de Machine Learning para previsão de atrasos"
+• "Backend Java + API Python FastAPI integrados"
 ```
 
 ---
 
-### **2. 🔬 Processo e Metodologia (01:30 - 03:00)**
+### **2. 🔬 Demonstração da Solução (01:00 - 03:30)**
 ```markdown
-🔄 Double Diamond Aplicado:
-• Fase 1: Descobrir (Discover)
-• Fase 2: Definir (Define)
-• Fase 3: Desenvolver (Develop)
-• Resultado: Solução centrada no humano e viável tecnicamente
+🖥️ Compartilhamento de Tela:
+• Interface web GOV.BR (flight-on-time-frontend)
+• Formulário de análise de voo
 
-📈 Estratégia de Dados Crítica:
-• Decisão: PRIORIZAR RECALL (Revocação)
-• Justificativa: "Identificamos que um Falso Negativo é 10x mais caro que um Falso Positivo"
+🎯 Funcionalidades Principais:
+1. **Análise em tempo real**:
+   - Preenchimento manual ou dados aleatórios
+   - Probabilidade de atraso com indicador visual
 
-🎯 Métricas do Modelo:
-• Recall (Revocação): > 85%
-• Objetivo: Capturar a maioria dos atrasos reais
-• Trade-off aceitável com Precisão
+2. **Testes da API**:
+   - Endpoints testáveis: /health, /predict, /model
+   - Logs em tempo real para debugging
 
-🤝 Ensemble de Modelos:
-• "Consenso de especialistas" (Voting/Stacking)
-• Random Forest + XGBoost
-• Combinação para robustez e acurácia
+3. **Status do Sistema**:
+   - Monitoramento automático
+   - Alertas apenas quando offline
+
+📊 Exemplo de Previsão:
+• "Companhia: GOL, Origem: CNF, Destino: BSB"
+• "Resultado: 81.5% probabilidade de atraso"
+• "Nível de risco: ALTO"
 ```
 
 ---
 
-### **3. 🖥️ Demonstração Funcional (Compartilhamento de Tela) (03:00 - 06:30)**
+### **3. 🏗️ Arquitetura Técnica (03:30 - 04:30)**
 ```markdown
-🏗️ Arquitetura Técnica:
-• FastAPI (Data Science/Microserviço ML)
-• Spring Boot (Backend/API Principal)
-• Integração: REST API com JSON
+🔧 Stack Tecnológica:
+• **Frontend**: HTML/CSS/JS com Design System GOV.BR
+• **Backend Java**: Spring Boot (porta 8080)
+• **ML API**: Python FastAPI (porta 8000)
 
-🔧 API em Ação (Live Demo):
-1. POST /predict (Previsão individual)
-   • JSON de entrada: {companhia, origem, destino, data, distância}
-   • JSON de saída: {previsao: "Atrasado", probabilidade: 0.78, fatores: [...]}
+🔄 Fluxo de Dados:
+1. Interface coleta dados do voo
+2. Java Spring Boot valida e processa
+3. FastAPI executa predição com Random Forest
+4. Resultados retornam em JSON
 
-2. GET /stats (Estatísticas)
-   • Dashboard de métricas acumuladas
-   • Banco de dados com histórico
-
-☁️ Infraestrutura OCI (Oracle Cloud):
-• Instâncias Always Free (ARM Ampere A1)
-• Banco de dados Autonomous
-• Custo: ZERO para MVP
-• Escalabilidade: Pronto para produção
+📈 Modelo de Machine Learning:
+• Random Forest Classifier (200 árvores)
+• 12 features selecionadas
+• Acurácia: ~85%
+• Tempo de resposta: <200ms
 ```
 
 ---
 
-### **4. 🎨 UX e Explicabilidade (06:30 - 08:30)**
+### **4. 🚀 Conclusão e Impacto (04:30 - 05:00)**
 ```markdown
-✨ Princípios de Design:
-• Ação sobre Informação
-• "Não apenas dizer 'atrasou', mas ajudar na decisão"
-• Interface minimalista e funcional
+✅ O que Entregamos:
+• Solução funcional e integrada
+• Documentação completa nas 4 fases
+• Interface profissional com padrões GOV.BR
 
-🔍 SHAP (XAI - Explainable AI):
-• O modelo explica o "porquê" da previsão:
-  - "Horário de pico aumenta risco em 35%"
-  - "Distância longa contribui com 20%"
-  - "Companhia X tem histórico positivo"
-• Gera confiança para o operador humano
+🌟 Diferenciais:
+• Integração Java-Python eficiente
+• Design acessível e responsivo
+• Código aberto e replicável
 
-⚡ Validação de Sucesso:
-• Objetivo UX: < 3 cliques para análise
-• Objetivo Tempo: < 2 minutos para decisão
-• KPIs de usabilidade mensurados
+🙌 Agradecimento:
+• "Obrigada à No Country e Oracle pela oportunidade"
+• "Confiamos no trabalho colaborativo da equipe"
+• "Estamos disponíveis no Showcase para conexões"
 ```
 
 ---
 
-### **5. 🚀 Conclusão e Visão de Futuro (08:30 - 10:00)**
+## ⚠️ **Regras do Hackathon Aplicadas**
+
+### **✅ Requisitos Obrigatórios:**
 ```markdown
-💰 ROI e Impacto de Negócio:
-• Projeção: Redução de 15% no tempo médio de atraso
-• Tradução: Milhões de USD economizados anualmente
-• ROI calculado: 4:1 (R$ 4 economizados para cada R$ 1 investido)
+🎥 Vídeo Demo: 5 minutos (dentro do limite)
+📊 Solução Funcional: Sistema operacional completo
+👥 Colaboração: Trabalho em equipe documentado
+⏱️ Prazos: Entrega dentro do cronograma
+```
 
-👥 Trabalho em Equipe Profissional:
-• Colaboração assíncrona eficiente
-• Ferramentas: Jira + Git + Inbox da plataforma
-• Comunicação: Simulando ambiente corporativo real
-
-🌐 Encerramento:
-• Convite: "Conheça nosso projeto no Showcase da No Country"
-• Agradecimento: "Obrigado pela atenção e oportunidade"
-• Call-to-action: "Estamos abertos para feedback e colaborações"
+### **🎯 Foco no Essencial:**
+```markdown
+• Problema que resolve: Previsão de atrasos de voos
+• Solução desenvolvida: Sistema full-stack de ML
+• Impacto: Otimização operacional para aviação
+• Evite detalhes técnicos excessivos
 ```
 
 ---
 
-## ⚠️ **Regras de Ouro para o Vídeo (No Country)**
+## 📋 **Checklist para Demo Day (20/01/2026)**
 
-### **1. 🛠️ Ferramentas e Técnica:**
-```markdown
-🎥 Gravação:
-• Ferramenta principal: Loom (ou similar)
-• Configuração: Tela + câmera em balãozinho
-• Qualidade: Áudio claro é mais importante que vídeo 4K
-
-📹 Envio:
-• Plataforma: YouTube
-• Visibilidade: Público
-• Link: Postar na seção de Entregáveis da plataforma
-
-🎬 Produção:
-• Foco: Evidência do processo e resultado funcional
-• ❌ NÃO precisa de: Efeitos especiais, música épica, edição complexa
-• ✅ PRECISA ter: Clareza, objetividade, demonstração real
+### **Pré-Apresentação:**
+```
+[ ] Inscrição no formulário (até 09/01)
+[ ] Apresentador: Ananda Matos confirmada
+[ ] Horário: 09:30 GMT-3
+[ ] Slides preparados (máx 2 slides)
 ```
 
-### **2. ⏰ Prazos Críticos:**
-```markdown
-📅 Prazo de Gravação: Até 17/01/2026
-⏱️ Prazo de Upload: Até 18/01 às 23:59 (GMT-3)
-🚀 Demo Day: 20/01/2026 (09:30 - sua apresentação)
+### **Durante a Apresentação:**
+```
+[ ] 5 minutos cronometrados
+[ ] 1 porta-voz apenas
+[ ] Foco em: problema → solução → impacto
+[ ] Destaque do trabalho em equipe
+[ ] Storytelling claro
 ```
 
-### **3. ✅ Checklist de Qualidade:**
-```markdown
-[ ] Áudio claro e sem ruído de fundo
-[ ] Tela nítida (1080p recomendado)
-[ ] Demonstração REAL da aplicação funcionando
-[ ] Todos os 5 pilares cobertos:
-    • Negócio (ROI)
-    • Ciência de Dados (Recall/SHAP)
-    • Engenharia (Spring/FastAPI/OCI)
-    • Produto (UX/Personas)
-    • Processo (Metodologia)
-[ ] Duração: 5-10 minutos (ideal: 7-8 minutos)
-[ ] Link YouTube configurado como Público
-[ ] Link postado na plataforma No Country
+### **Slides (Máximo 2):**
 ```
+Slide 1:
+• Logo Flight On Time
+• Estatística: "15% dos voos atrasam"
+• Arquitetura simplificada
 
----
-
-## 🎯 **Pilares do Roteiro - Resumo Visual**
-
-### **📊 Matriz de Cobertura:**
-| Pilar | Tempo | Elementos-Chave | Objetivo |
-|-------|-------|-----------------|----------|
-| **Negócio** | 01:30 | ROI, custos, impacto | Mostrar valor financeiro |
-| **Dados** | 01:30 | Recall, estratégia, métricas | Demonstrar critério técnico |
-| **Engenharia** | 03:30 | Demo API, arquitetura, OCI | Provar funcionalidade |
-| **Produto** | 02:00 | UX, SHAP, personas | Validar usabilidade |
-| **Processo** | 01:30 | Metodologia, equipe | Evidenciar profissionalismo |
-
-### **⏱️ Timeline Visual:**
-```
-00:00-01:30 🎯 PROBLEMA (Financeiro + Persona)
-01:30-03:00 🔬 METODOLOGIA (Recall + Ensemble)
-03:00-06:30 🖥️ DEMO (API + OCI + Funcionalidades)
-06:30-08:30 🎨 UX (SHAP + Design Thinking)
-08:30-10:00 🚀 CONCLUSÃO (ROI + Equipe + Call-to-action)
+Slide 2:
+• Print da interface funcionando
+• Métricas do modelo (85% acurácia)
+• Links: GitHub, Demo, Documentação
 ```
 
 ---
 
 ## 💡 **Dicas de Apresentação**
 
-### **1. 🎤 Performance Vocal:**
+### **Storytelling:**
 ```markdown
-🗣️ Tom de Voz:
-• Claro e confiante
-• Pausas estratégicas
-• Ênfase nos números-chave
-
-📝 Roteiro:
-• Não leia palavra por palavra
-• Use tópicos como guia
-• Pratique 2-3 vezes antes
+1. "Imagine poder prever atrasos de voos..."
+2. "Nossa equipe construiu uma solução que..."
+3. "Veja como funciona na prática..."
+4. "Os resultados mostram que..."
+5. "Esta experiência nos mostrou que..."
 ```
 
-### **2. 🖥️ Demonstração Técnica:**
+### **O que os Jurados Avaliam:**
 ```markdown
-🔧 Preparação:
-• Tenha dados de teste prontos
-• Prepare cenários diferentes
-• Teste TUDO antes de gravar
-
-🎯 Foco na Tela:
-• Zoom em áreas importantes
-• Mostre inputs e outputs claramente
-• Evite transições muito rápidas
-```
-
-### **3. 🎨 Storytelling:**
-```markdown
-📖 Estrutura Narrativa:
-1. "Era uma vez um problema gigante..."
-2. "Nossa equipe descobriu que..."
-3. "Construímos uma solução que..."
-4. "E os resultados são..."
-5. "Imagine o futuro onde..."
-
-🎭 Elementos Emocionais:
-• Conecte com experiência pessoal (já teve voo atrasado?)
-• Mostre o "antes" caótico vs "depois" organizado
-• Humanize a tecnologia
+• Clareza na comunicação
+• Propósito do projeto
+• Impacto da solução
+• Trabalho colaborativo
+• Profissionalismo
 ```
 
 ---
 
-## 🚨 **PONTOS CRÍTICOS DE ATENÇÃO**
+## 🎬 **Gravação do Vídeo Demo**
 
-### **✅ O QUE FAZER:**
+### **Configuração:**
 ```markdown
-• Mostrar a APLICAÇÃO REAL funcionando
-• Falar sobre DECISÕES (não apenas resultados)
-• Demonstrar COLABORAÇÃO da equipe
-• Incluir NÚMEROS CONCRETOS (ROI, métricas)
-• Manter PROFISSIONALISMO do início ao fim
+🛠️ Ferramenta: Loom (sugerida) ou similar
+🎥 Formato: Tela + webcam (opcional)
+⏱️ Duração: 5 minutos
+📤 Upload: YouTube (público)
+🔗 Postar: Link na plataforma do Hackathon
 ```
 
-### **❌ O QUE EVITAR:**
-```markdown
-• Efeitos visuais exagerados
-• Jargões técnicos sem explicação
-• Demonstrações "fake" ou pré-gravadas
-• Exceder 10 minutos
-• Esquecer de mencionar a plataforma No Country
+### **Estrutura do Vídeo:**
+```
+00:00-01:00: Introdução e problema
+01:00-03:30: Demo da aplicação (tela)
+03:30-04:30: Explicação técnica resumida
+04:30-05:00: Conclusão e agradecimentos
 ```
 
 ---
 
-## 📋 **Checklist Final de Gravação**
+## ✨ **Mensagem Final**
 
-### **🎬 Pré-Gravação:**
-```
-[ ] Script revisado e aprovado pela equipe
-[ ] Ambiente de gravação silencioso
-[ ] Iluminação adequada (se usar câmera)
-[ ] Mic testado (áudio claro)
-[ ] Aplicação funcionando perfeitamente
-[ ] Dados de teste preparados
-[ ] Tela organizada (sem ícones desnecessários)
-```
-
-### **🎥 Durante a Gravação:**
-```
-[ ] Iniciar com cumprimento e contexto
-[ ] Seguir timeline (monitorar relógio)
-[ ] Demonstrar funcionalidades REAIS
-[ ] Mostrar código/interface quando relevante
-[ ] Encerrar com call-to-action claro
-```
-
-### **📤 Pós-Gravação:**
-```
-[ ] Upload no YouTube como Público
-[ ] Título: "FlightOnTime - Hackathon ONE II - Demo"
-[ ] Descrição com links importantes
-[ ] Postar link na plataforma No Country
-[ ] Compartilhar com a equipe para review
-```
-
----
-
-## 🌟 **Benefícios deste Roteiro**
-
-### **Para as Empresas Observadoras:**
-```markdown
-✅ Demonstra pensamento estratégico
-✅ Mostra competência técnica real
-✅ Evidencia trabalho em equipe
-✅ Apresenta solução escalável
-✅ Conecta tecnologia a negócio
-```
-
-### **Para sua Carreira:**
-```markdown
-🚀 Portfólio profissional de alto impacto
-📈 Visibilidade no Showcase da No Country
-🤝 Networking com empresas parceiras
-💼 Evidência concreta de habilidades
-🎯 Diferencial competitivo real
-```
-
----
-
-**🎬 Agora é com você!** Este roteiro cobre todos os aspectos técnicos, de negócio e processuais que as empresas observadoras procuram. Grave com confiança, mostre o trabalho incrível que sua equipe realizou, e boa sorte no Demo Day! 🚀
-
-*Lembre-se: O objetivo não é perfeição, é EVIDÊNCIA de capacidade profissional.*
+**"Nosso projeto Flight On Time demonstra como dados e colaboração podem transformar operações críticas. Mais do que código, entregamos uma solução com propósito, impacto real e trabalho em equipe - exatamente o que as empresas buscam no mercado atual."**
